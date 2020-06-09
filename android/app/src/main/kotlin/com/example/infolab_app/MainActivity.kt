@@ -1,4 +1,4 @@
-package com.example.infolab_app
+package com.gustavodsl.infolab_app
 
 import io.flutter.embedding.android.FlutterActivity
 
