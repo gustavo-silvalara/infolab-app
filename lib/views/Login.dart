@@ -138,15 +138,17 @@ class _LoginState extends State<Login> {
                 ),
                 Padding(
                   padding: EdgeInsets.only(top: 20),
-                  child: Text(
-                    _mensagemErro,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xffC90C0F),
+                  child: Center(
+                    child: Text(
+                      _mensagemErro,
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xffC90C0F),
+                      ),
                     ),
                   ),
-                )
+                ),
               ],
             ),
           ),
