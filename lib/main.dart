@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:infolab_app/views/Home.dart';
+import 'package:infolab_app/views/Login.dart';
 
 final ThemeData temaPadrao = ThemeData(
   primaryColor: Color(0xff359830),
@@ -10,7 +10,7 @@ final ThemeData temaPadrao = ThemeData(
 void main() {
   runApp(MaterialApp(
     title: "InfoLab",
-    home: Home(),
+    home: Login(),
     theme: temaPadrao,
     debugShowCheckedModeBanner: false,
   ));
