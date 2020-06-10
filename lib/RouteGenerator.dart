@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:infolab_app/views/Laboratorios.dart';
 import 'package:infolab_app/views/Login.dart';
 import 'package:infolab_app/views/MeusLaboratorios.dart';
+import 'package:infolab_app/views/NovoLaboratorio.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -20,6 +21,10 @@ class RouteGenerator {
       case '/meus-laboratorios':
         return MaterialPageRoute(
           builder: (_) => MeusLaboratorios(),
+        );
+      case '/novo-laboratorio':
+        return MaterialPageRoute(
+          builder: (_) => NovoLaboratorio(),
         );
       default:
         _erroRota();

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:infolab_app/views/widgets/ItemLaboratorio.dart';
 
 class MeusLaboratorios extends StatefulWidget {
   @override
@@ -19,7 +20,12 @@ class _MeusLaboratoriosState extends State<MeusLaboratorios> {
           Navigator.pushNamed(context, '/novo-laboratorio');
         },
       ),
-      body: Container(),
+      body: ListView.builder(
+        itemCount: 4,
+        itemBuilder: (_, indice) {
+          return ItemLaboratorio();
+        },
+      ),
     );
   }
 }

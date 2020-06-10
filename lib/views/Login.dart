@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:infolab_app/models/Usuario.dart';
-import 'package:infolab_app/views/CustomInput.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:infolab_app/views/widgets/CustomInput.dart';
 
 class Login extends StatefulWidget {
   @override
