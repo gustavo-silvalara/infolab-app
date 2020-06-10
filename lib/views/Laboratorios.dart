@@ -17,9 +17,9 @@ class _LaboratoriosState extends State<Laboratorios> {
   String _idUsuarioLogado;
 
   _recuperaDadosUsuarioLogado() async {
-    FirebaseAuth auth = FirebaseAuth.instance;
-    FirebaseUser usuarioLogado = await auth.currentUser();
-    _idUsuarioLogado = usuarioLogado.uid;
+    // FirebaseAuth auth = FirebaseAuth.instance;
+    // FirebaseUser usuarioLogado = await auth.currentUser();
+    // _idUsuarioLogado = usuarioLogado.uid;
   }
 
   Future<Stream<QuerySnapshot>> _adicionarListenerAnuncios() async {
@@ -40,8 +40,8 @@ class _LaboratoriosState extends State<Laboratorios> {
   @override
   void initState() {
     super.initState();
-    _adicionarListenerAnuncios();
     _verificarUsuarioLogado();
+    _adicionarListenerAnuncios();
   }
 
   List<String> itensMenu = [];
