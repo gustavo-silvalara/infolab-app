@@ -13,7 +13,7 @@ class _LoginState extends State<Login> {
     text: 'gustavo.silvalara@outlook.com',
   );
   TextEditingController _controllerSenha = TextEditingController(
-    text: '123456',
+    text: '12345678',
   );
 
   bool _cadastrar = false;
@@ -34,7 +34,7 @@ class _LoginState extends State<Login> {
         .createUserWithEmailAndPassword(
             email: usuario.email, password: usuario.senha)
         .then((firebaseUser) {
-      //redirecionar
+      Navigator.pushReplacementNamed(context, '/');
     });
   }
 
@@ -44,7 +44,7 @@ class _LoginState extends State<Login> {
         .signInWithEmailAndPassword(
             email: usuario.email, password: usuario.senha)
         .then((firebaseUser) {
-      //paginaPrincipal
+      Navigator.pushReplacementNamed(context, '/');
     });
   }
 
@@ -75,10 +75,6 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: Text(''),
-      //   elevation: 0.0,
-      // ),
       body: Container(
         color: Colors.white,
         padding: EdgeInsets.all(16),

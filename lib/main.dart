@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:infolab_app/views/Login.dart';
+import 'package:infolab_app/RouteGenerator.dart';
+import 'package:infolab_app/views/Laboratorios.dart';
 
 final ThemeData temaPadrao = ThemeData(
   primaryColor: Color(0xff359830),
@@ -9,9 +10,11 @@ final ThemeData temaPadrao = ThemeData(
 
 void main() {
   runApp(MaterialApp(
-    title: "InfoLab",
-    home: Login(),
+    title: 'InfoLab',
+    home: Laboratorios(),
     theme: temaPadrao,
+    initialRoute: '/',
+    onGenerateRoute: RouteGenerator.generateRoute,
     debugShowCheckedModeBanner: false,
   ));
 }
