@@ -1,10 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:infolab_app/models/Laboratorio.dart';
 
 class ItemLaboratorio extends StatelessWidget {
+  Laboratorio laboratorio;
+  VoidCallback onTapItem;
+  VoidCallback onPressedEdit;
+
+  ItemLaboratorio({
+    @required this.laboratorio,
+    @required this.onTapItem,
+    this.onPressedEdit,
+  });
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        this.onTapItem;
+      },
       child: Card(
         child: Padding(
           padding: EdgeInsets.all(12),
@@ -13,8 +26,9 @@ class ItemLaboratorio extends StatelessWidget {
               SizedBox(
                 width: 120,
                 height: 120,
-                child: Container(
-                  color: Colors.green,
+                child: Image.network(
+                  laboratorio.fotos[0],
+                  fit: BoxFit.cover,
                 ),
               ),
               Expanded(
@@ -25,24 +39,34 @@ class ItemLaboratorio extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        'LAB-03',
+                        laboratorio.nome,
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold),
                       ),
-                      Text('Pedro Neto'),
+                      Text(
+                        laboratorio.responsavel,
+                        style: TextStyle(fontSize: 15),
+                      ),
+                      Text(
+                        laboratorio.email,
+                        style: TextStyle(fontSize: 13),
+                      )
                     ],
                   ),
                 ),
               ),
-              Expanded(
-                flex: 1,
-                child: FlatButton(
-                  color: Colors.white,
-                  padding: EdgeInsets.all(10),
-                  onPressed: () {},
-                  child: Icon(Icons.edit, color: Colors.black),
+              if (this.onPressedEdit != null)
+                Expanded(
+                  flex: 1,
+                  child: FlatButton(
+                    color: Colors.white,
+                    padding: EdgeInsets.all(10),
+                    onPressed: () {
+                      this.onPressedEdit;
+                    },
+                    child: Icon(Icons.edit, color: Colors.black),
+                  ),
                 ),
-              ),
             ],
           ),
         ),
