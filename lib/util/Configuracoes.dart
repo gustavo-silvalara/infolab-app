@@ -48,7 +48,7 @@ class Configuracoes {
 
     itensDropCategorias.add(DropdownMenuItem(
       child: Text("Engenharias"),
-      value: "engenharia",
+      value: "engenharias",
     ));
 
     itensDropCategorias.add(DropdownMenuItem(
