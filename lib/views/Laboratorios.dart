@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:infolab_app/main.dart';
 import 'package:infolab_app/models/Laboratorio.dart';
 import 'package:infolab_app/util/Configuracoes.dart';
+import 'package:infolab_app/views/widgets/InputPesquisa.dart';
 import 'package:infolab_app/views/widgets/ItemLaboratorio.dart';
 
 class Laboratorios extends StatefulWidget {
@@ -14,6 +15,10 @@ class Laboratorios extends StatefulWidget {
 }
 
 class _LaboratoriosState extends State<Laboratorios> {
+  bool digitando = false;
+  final TextEditingController _controllerPesquisa =
+      TextEditingController(text: '');
+
   List<String> itensMenu = [];
   List<DropdownMenuItem<String>> _listaItensDropCategorias;
   List<DropdownMenuItem<String>> _listaItensDropEstados;
@@ -85,6 +90,20 @@ class _LaboratoriosState extends State<Laboratorios> {
     });
   }
 
+  Future<Stream<QuerySnapshot>> _filtrarPesquisa() async {
+    Firestore db = Firestore.instance;
+    Query query = db.collection("laboratorios");
+
+    if (_controllerPesquisa.text.length > 2) {
+      query = query.where("responsavel", isEqualTo: _controllerPesquisa.text);
+      _controllerPesquisa.text = '';
+    }
+    Stream<QuerySnapshot> stream = query.snapshots();
+    stream.listen((dados) {
+      _controller.add(dados);
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -111,12 +130,24 @@ class _LaboratoriosState extends State<Laboratorios> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Laboratórios'),
+        title: digitando
+            ? InputPesquisa(
+                controller: _controllerPesquisa,
+                onTyping: this._filtrarPesquisa,
+              )
+            : Text('Laboratórios'),
         elevation: 0.0,
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.search),
-            onPressed: () => {print('ara')},
+            icon: Icon(digitando ? Icons.check : Icons.search),
+            onPressed: () {
+              setState(() {
+                if (digitando) {
+                  _filtrarPesquisa();
+                }
+                digitando = !digitando;
+              });
+            },
           ),
           PopupMenuButton<String>(
             onSelected: _escolhaMenuItem,

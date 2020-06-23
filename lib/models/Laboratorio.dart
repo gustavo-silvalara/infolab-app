@@ -9,6 +9,9 @@ class Laboratorio {
   String _email;
   String _descricao;
   List<String> _fotos;
+  String _possibilidades;
+  String _equipamentos;
+  String _projetosDesenvolvidos;
 
   Laboratorio();
 
@@ -21,6 +24,9 @@ class Laboratorio {
     this.email = documentSnapshot["email"];
     this.descricao = documentSnapshot["descricao"];
     this.fotos = List<String>.from(documentSnapshot["fotos"]);
+    this.possibilidades = documentSnapshot["possibilidades"];
+    this.equipamentos = documentSnapshot["equipamentos"];
+    this.projetosDesenvolvidos = documentSnapshot["projetos_desenvolvidos"];
   }
 
   Laboratorio.gerarId() {
@@ -40,6 +46,9 @@ class Laboratorio {
       "email": this.email,
       "descricao": this.descricao,
       "fotos": this.fotos,
+      "possibilidades": this.possibilidades,
+      "equipamentos": this.equipamentos,
+      "projetos_desenvolvidos": this.projetosDesenvolvidos,
     };
 
     return map;
@@ -91,5 +100,23 @@ class Laboratorio {
 
   set id(String value) {
     _id = value;
+  }
+
+  String get equipamentos => _equipamentos;
+
+  set equipamentos(String value) {
+    _equipamentos = value;
+  }
+
+  String get possibilidades => _possibilidades;
+
+  set possibilidades(String value) {
+    _possibilidades = value;
+  }
+
+  String get projetosDesenvolvidos => _projetosDesenvolvidos;
+
+  set projetosDesenvolvidos(String value) {
+    _projetosDesenvolvidos = value;
   }
 }
