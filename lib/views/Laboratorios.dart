@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:infolab_app/main.dart';
 import 'package:infolab_app/models/Laboratorio.dart';
+import 'package:infolab_app/util/Configuracoes.dart';
 import 'package:infolab_app/views/widgets/ItemLaboratorio.dart';
 
 class Laboratorios extends StatefulWidget {
@@ -12,39 +14,14 @@ class Laboratorios extends StatefulWidget {
 }
 
 class _LaboratoriosState extends State<Laboratorios> {
+  List<String> itensMenu = [];
+  List<DropdownMenuItem<String>> _listaItensDropCategorias;
+  List<DropdownMenuItem<String>> _listaItensDropEstados;
+
   final _controller = StreamController<QuerySnapshot>.broadcast();
 
-  String _idUsuarioLogado;
-
-  _recuperaDadosUsuarioLogado() async {
-    // FirebaseAuth auth = FirebaseAuth.instance;
-    // FirebaseUser usuarioLogado = await auth.currentUser();
-    // _idUsuarioLogado = usuarioLogado.uid;
-  }
-
-  Future<Stream<QuerySnapshot>> _adicionarListenerAnuncios() async {
-    await _recuperaDadosUsuarioLogado();
-
-    Firestore db = Firestore.instance;
-    Stream<QuerySnapshot> stream = db
-        .collection('meus_laboratorios')
-        // .document(_idUsuarioLogado)
-        // .collection('laboratorios')
-        // no firebase a ordem tem que ser pasta meus_laboratorios/ pasta com id do usuario/ pasta laboratorios
-        .snapshots();
-    stream.listen((dados) {
-      _controller.add(dados);
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _verificarUsuarioLogado();
-    _adicionarListenerAnuncios();
-  }
-
-  List<String> itensMenu = [];
+  String _itemSelecionadoEstado;
+  String _itemSelecionadoCategoria;
 
   _escolhaMenuItem(String itemEscolhido) {
     switch (itemEscolhido) {
@@ -74,6 +51,48 @@ class _LaboratoriosState extends State<Laboratorios> {
         : ['Meus Laboratórios', 'Sair'];
   }
 
+  _carregarItensDropdown() {
+    //Categorias
+    _listaItensDropCategorias = Configuracoes.getCategorias();
+
+    //Estados
+    _listaItensDropEstados = Configuracoes.getEstados();
+  }
+
+  Future<Stream<QuerySnapshot>> _adicionarListenerLaboratorios() async {
+    Firestore db = Firestore.instance;
+    Stream<QuerySnapshot> stream = db.collection("laboratorios").snapshots();
+
+    stream.listen((dados) {
+      _controller.add(dados);
+    });
+  }
+
+  Future<Stream<QuerySnapshot>> _filtrarLaboratorios() async {
+    Firestore db = Firestore.instance;
+    Query query = db.collection("laboratorios");
+
+    if (_itemSelecionadoEstado != null) {
+      query = query.where("estado", isEqualTo: _itemSelecionadoEstado);
+    }
+    if (_itemSelecionadoCategoria != null) {
+      query = query.where("categoria", isEqualTo: _itemSelecionadoCategoria);
+    }
+
+    Stream<QuerySnapshot> stream = query.snapshots();
+    stream.listen((dados) {
+      _controller.add(dados);
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _carregarItensDropdown();
+    _verificarUsuarioLogado();
+    _adicionarListenerLaboratorios();
+  }
+
   @override
   Widget build(BuildContext context) {
     var carregandoDados = Column(
@@ -93,7 +112,7 @@ class _LaboratoriosState extends State<Laboratorios> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Laboratórios'),
-        elevation: 0,
+        elevation: 0.0,
         actions: <Widget>[
           PopupMenuButton<String>(
             onSelected: _escolhaMenuItem,
@@ -108,34 +127,99 @@ class _LaboratoriosState extends State<Laboratorios> {
           ),
         ],
       ),
-      body: StreamBuilder(
-        stream: _controller.stream,
-        builder: (context, snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.none:
-            case ConnectionState.waiting:
-              return carregandoDados;
-              break;
-            case ConnectionState.active:
-            case ConnectionState.done:
-              if (snapshot.hasError) return Text('Erro ao carregar os dados!');
+      body: Container(
+        child: Column(
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                Expanded(
+                  child: DropdownButtonHideUnderline(
+                    child: Center(
+                      child: DropdownButton(
+                        iconEnabledColor: temaPadrao.primaryColor,
+                        value: _itemSelecionadoEstado,
+                        items: _listaItensDropEstados,
+                        style: TextStyle(fontSize: 22, color: Colors.black),
+                        onChanged: (estado) {
+                          setState(() {
+                            _itemSelecionadoEstado = estado;
+                            _filtrarLaboratorios();
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: DropdownButtonHideUnderline(
+                    child: Center(
+                      child: DropdownButton(
+                        isExpanded: true,
+                        iconEnabledColor: temaPadrao.primaryColor,
+                        value: _itemSelecionadoCategoria,
+                        items: _listaItensDropCategorias,
+                        style: TextStyle(fontSize: 22, color: Colors.black),
+                        onChanged: (categoria) {
+                          setState(() {
+                            _itemSelecionadoCategoria = categoria;
+                            _filtrarLaboratorios();
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            StreamBuilder(
+              stream: _controller.stream,
+              builder: (context, snapshot) {
+                switch (snapshot.connectionState) {
+                  case ConnectionState.none:
+                  case ConnectionState.waiting:
+                    return carregandoDados;
+                    break;
+                  case ConnectionState.active:
+                  case ConnectionState.done:
+                    QuerySnapshot querySnapshot = snapshot.data;
+                    if (querySnapshot.documents.length == 0) {
+                      return Container(
+                        padding: EdgeInsets.all(25),
+                        child: Text(
+                          "Nenhum Laboratório!",
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                      );
+                    }
+                    return Expanded(
+                      child: ListView.builder(
+                          itemCount: querySnapshot.documents.length,
+                          itemBuilder: (_, indice) {
+                            List<DocumentSnapshot> laboratorios =
+                                querySnapshot.documents.toList();
+                            DocumentSnapshot documentSnapshot =
+                                laboratorios[indice];
+                            Laboratorio laboratorio =
+                                Laboratorio.fromDocumentSnapshot(
+                                    documentSnapshot);
 
-              QuerySnapshot querySnapshot = snapshot.data;
-              return ListView.builder(
-                  itemCount: querySnapshot.documents.length,
-                  itemBuilder: (_, indice) {
-                    List<DocumentSnapshot> laboratorios =
-                        querySnapshot.documents.toList();
-                    DocumentSnapshot documentSnapshot = laboratorios[indice];
-                    Laboratorio laboratorio =
-                        Laboratorio.fromDocumentSnapshot(documentSnapshot);
-                    return ItemLaboratorio(
-                      laboratorio: laboratorio,
+                            return ItemLaboratorio(
+                              laboratorio: laboratorio,
+                              onTapItem: () {
+                                Navigator.pushNamed(
+                                    context, "/detalhes-laboratorio",
+                                    arguments: laboratorio);
+                              },
+                            );
+                          }),
                     );
-                  });
-          }
-          return Container();
-        },
+                }
+                return Container();
+              },
+            )
+          ],
+        ),
       ),
     );
   }

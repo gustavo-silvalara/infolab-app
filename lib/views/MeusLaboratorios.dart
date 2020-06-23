@@ -21,16 +21,12 @@ class _MeusLaboratoriosState extends State<MeusLaboratorios> {
     _idUsuarioLogado = usuarioLogado.uid;
   }
 
-  Future<Stream<QuerySnapshot>> _adicionarListenerAnuncios() async {
+  Future<Stream<QuerySnapshot>> _adicionarListenerLaboratorios() async {
     await _recuperaDadosUsuarioLogado();
 
     Firestore db = Firestore.instance;
-    Stream<QuerySnapshot> stream = db
-        .collection('meus_laboratorios')
-        // .document(_idUsuarioLogado)
-        // .collection('laboratorios')
-        // no firebase a ordem tem que ser pasta meus_laboratorios/ pasta com id do usuario/ pasta laboratorios
-        .snapshots();
+    Stream<QuerySnapshot> stream =
+        db.collection('meus_laboratorios').snapshots();
     stream.listen((dados) {
       _controller.add(dados);
     });
@@ -39,7 +35,7 @@ class _MeusLaboratoriosState extends State<MeusLaboratorios> {
   @override
   void initState() {
     super.initState();
-    _adicionarListenerAnuncios();
+    _adicionarListenerLaboratorios();
   }
 
   @override
@@ -92,7 +88,10 @@ class _MeusLaboratoriosState extends State<MeusLaboratorios> {
                         Laboratorio.fromDocumentSnapshot(documentSnapshot);
                     return ItemLaboratorio(
                       laboratorio: laboratorio,
-                      onPressedEdit: () {},
+                      onPressedEdit: () {
+                        Navigator.pushNamed(context, "/detalhes-laboratorio",
+                            arguments: laboratorio);
+                      },
                     );
                   });
           }

@@ -8,16 +8,14 @@ class ItemLaboratorio extends StatelessWidget {
 
   ItemLaboratorio({
     @required this.laboratorio,
-    @required this.onTapItem,
+    this.onTapItem,
     this.onPressedEdit,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        this.onTapItem;
-      },
+      onTap: this.onTapItem,
       child: Card(
         child: Padding(
           padding: EdgeInsets.all(12),
@@ -61,9 +59,7 @@ class ItemLaboratorio extends StatelessWidget {
                   child: FlatButton(
                     color: Colors.white,
                     padding: EdgeInsets.all(10),
-                    onPressed: () {
-                      this.onPressedEdit;
-                    },
+                    onPressed: this.onPressedEdit,
                     child: Icon(Icons.edit, color: Colors.black),
                   ),
                 ),

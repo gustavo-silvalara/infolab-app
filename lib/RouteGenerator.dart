@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:infolab_app/views/DetalhesLaboratorio.dart';
 import 'package:infolab_app/views/Laboratorios.dart';
 import 'package:infolab_app/views/Login.dart';
 import 'package:infolab_app/views/MeusLaboratorios.dart';
@@ -26,6 +27,8 @@ class RouteGenerator {
         return MaterialPageRoute(
           builder: (_) => NovoLaboratorio(),
         );
+      case "/detalhes-laboratorio":
+        return MaterialPageRoute(builder: (_) => DetalhesLaboratorio(args));
       default:
         _erroRota();
     }
