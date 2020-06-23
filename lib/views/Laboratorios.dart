@@ -114,6 +114,10 @@ class _LaboratoriosState extends State<Laboratorios> {
         title: Text('Laboratórios'),
         elevation: 0.0,
         actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.search),
+            onPressed: () => {print('ara')},
+          ),
           PopupMenuButton<String>(
             onSelected: _escolhaMenuItem,
             itemBuilder: (context) {
