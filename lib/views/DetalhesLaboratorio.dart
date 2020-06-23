@@ -79,12 +79,38 @@ class _DetalhesLaboratorioState extends State<DetalhesLaboratorio> {
                       child: Divider(),
                     ),
                     Text(
-                      "Descrição",
+                      "Equipamentos",
                       style:
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      "${_laboratorio.descricao}",
+                      "${_laboratorio.equipamentos}",
+                      style: TextStyle(fontSize: 18),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 16),
+                      child: Divider(),
+                    ),
+                    Text(
+                      "Possibilidades",
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      "${_laboratorio.possibilidades}",
+                      style: TextStyle(fontSize: 18),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 16),
+                      child: Divider(),
+                    ),
+                    Text(
+                      "Projetos Desenvolvidos",
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      "${_laboratorio.projetosDesenvolvidos}",
                       style: TextStyle(fontSize: 18),
                     ),
                     Padding(
