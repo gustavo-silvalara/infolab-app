@@ -36,6 +36,14 @@ class _DetalhesLaboratorioState extends State<DetalhesLaboratorio> {
     }
   }
 
+  _abrirSite(String site) async {
+    if (await canLaunch(site)) {
+      await launch(site);
+    } else {
+      print("Não foi possível abrir site");
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -48,6 +56,7 @@ class _DetalhesLaboratorioState extends State<DetalhesLaboratorio> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Laboratório"),
+        elevation: 0.0,
       ),
       body: Stack(
         children: <Widget>[
@@ -92,25 +101,12 @@ class _DetalhesLaboratorioState extends State<DetalhesLaboratorio> {
                       child: Divider(),
                     ),
                     Text(
-                      "Possibilidades",
+                      "Atividades",
                       style:
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      "${_laboratorio.possibilidades}",
-                      style: TextStyle(fontSize: 18),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 16),
-                      child: Divider(),
-                    ),
-                    Text(
-                      "Projetos Desenvolvidos",
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      "${_laboratorio.projetosDesenvolvidos}",
+                      "${_laboratorio.atividades}",
                       style: TextStyle(fontSize: 18),
                     ),
                     Padding(
@@ -123,17 +119,53 @@ class _DetalhesLaboratorioState extends State<DetalhesLaboratorio> {
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     Padding(
-                      padding: EdgeInsets.only(bottom: 10),
+                      padding: EdgeInsets.only(bottom: 0),
                       child: Text(
                         "${_laboratorio.responsavel}",
                         style: TextStyle(fontSize: 18),
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.only(bottom: 66),
+                      padding: EdgeInsets.only(bottom: 0),
                       child: Text(
                         "${_laboratorio.email}",
                         style: TextStyle(fontSize: 18),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 16),
+                      child: Divider(),
+                    ),
+                    Text(
+                      "Local",
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 0),
+                      child: Text(
+                        "Cidade: ${_laboratorio.cidade}",
+                        style: TextStyle(fontSize: 18),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 10),
+                      child: Text(
+                        "Campus: ${_laboratorio.campus}",
+                        style: TextStyle(fontSize: 18),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 70),
+                      child: GestureDetector(
+                        child: Text(
+                          _laboratorio.site,
+                          style:
+                              TextStyle(fontSize: 18, color: Colors.lightBlue),
+                        ),
+                        onTap: () {
+                          _abrirSite(_laboratorio.site);
+                        },
                       ),
                     ),
                   ],

@@ -9,9 +9,12 @@ class Laboratorio {
   String _email;
   String _descricao;
   List<String> _fotos;
-  String _possibilidades;
+  String _atividades;
   String _equipamentos;
-  String _projetosDesenvolvidos;
+  String _filtro;
+  String _cidade;
+  String _campus;
+  String _site;
 
   Laboratorio();
 
@@ -24,9 +27,12 @@ class Laboratorio {
     this.email = documentSnapshot["email"];
     this.descricao = documentSnapshot["descricao"];
     this.fotos = List<String>.from(documentSnapshot["fotos"]);
-    this.possibilidades = documentSnapshot["possibilidades"];
+    this.atividades = documentSnapshot["atividades"];
     this.equipamentos = documentSnapshot["equipamentos"];
-    this.projetosDesenvolvidos = documentSnapshot["projetos_desenvolvidos"];
+    this.filtro = documentSnapshot["filtro"];
+    this.cidade = documentSnapshot["cidade"];
+    this.campus = documentSnapshot["campus"];
+    this.site = documentSnapshot["site"];
   }
 
   Laboratorio.gerarId() {
@@ -46,9 +52,12 @@ class Laboratorio {
       "email": this.email,
       "descricao": this.descricao,
       "fotos": this.fotos,
-      "possibilidades": this.possibilidades,
+      "atividades": this.atividades,
       "equipamentos": this.equipamentos,
-      "projetos_desenvolvidos": this.projetosDesenvolvidos,
+      "filtro": this.filtro,
+      "cidade": this.cidade,
+      "campus": this.campus,
+      "site": this.site,
     };
 
     return map;
@@ -108,15 +117,33 @@ class Laboratorio {
     _equipamentos = value;
   }
 
-  String get possibilidades => _possibilidades;
+  String get atividades => _atividades;
 
-  set possibilidades(String value) {
-    _possibilidades = value;
+  set atividades(String value) {
+    _atividades = value;
   }
 
-  String get projetosDesenvolvidos => _projetosDesenvolvidos;
+  String get cidade => _cidade;
 
-  set projetosDesenvolvidos(String value) {
-    _projetosDesenvolvidos = value;
+  set cidade(String value) {
+    _cidade = value;
+  }
+
+  String get campus => _campus;
+
+  set campus(String value) {
+    _campus = value;
+  }
+
+  String get filtro => _filtro;
+
+  set filtro(String value) {
+    _filtro = value;
+  }
+
+  String get site => _site;
+
+  set site(String value) {
+    _site = value;
   }
 }

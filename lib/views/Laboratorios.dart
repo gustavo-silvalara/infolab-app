@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:infolab_app/main.dart';
@@ -74,6 +75,7 @@ class _LaboratoriosState extends State<Laboratorios> {
   }
 
   Future<Stream<QuerySnapshot>> _filtrarLaboratorios() async {
+    this.filtro = false;
     Firestore db = Firestore.instance;
     Query query = db.collection("laboratorios");
 
@@ -91,18 +93,19 @@ class _LaboratoriosState extends State<Laboratorios> {
   }
 
   Future<Stream<QuerySnapshot>> _filtrarPesquisa() async {
+    this.filtro = true;
     Firestore db = Firestore.instance;
     Query query = db.collection("laboratorios");
 
-    if (_controllerPesquisa.text.length > 2) {
-      query = query.where("responsavel", isEqualTo: _controllerPesquisa.text);
-      _controllerPesquisa.text = '';
-    }
+    query = query.orderBy("filtro");
+
     Stream<QuerySnapshot> stream = query.snapshots();
     stream.listen((dados) {
       _controller.add(dados);
     });
   }
+
+  bool filtro = false;
 
   @override
   void initState() {
@@ -238,15 +241,28 @@ class _LaboratoriosState extends State<Laboratorios> {
                             Laboratorio laboratorio =
                                 Laboratorio.fromDocumentSnapshot(
                                     documentSnapshot);
-
-                            return ItemLaboratorio(
-                              laboratorio: laboratorio,
-                              onTapItem: () {
-                                Navigator.pushNamed(
-                                    context, "/detalhes-laboratorio",
-                                    arguments: laboratorio);
-                              },
-                            );
+                            if (_controllerPesquisa.text.length < 2) {
+                              return ItemLaboratorio(
+                                laboratorio: laboratorio,
+                                onTapItem: () {
+                                  Navigator.pushNamed(
+                                      context, "/detalhes-laboratorio",
+                                      arguments: laboratorio);
+                                },
+                              );
+                            } else {
+                              if (laboratorio.filtro.toUpperCase().contains(
+                                  _controllerPesquisa.text.toUpperCase())) {
+                                return ItemLaboratorio(
+                                  laboratorio: laboratorio,
+                                  onTapItem: () {
+                                    Navigator.pushNamed(
+                                        context, "/detalhes-laboratorio",
+                                        arguments: laboratorio);
+                                  },
+                                );
+                              }
+                            }
                           }),
                     );
                 }
