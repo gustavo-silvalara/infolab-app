@@ -1,4 +1,0 @@
-Sem Responsável Edição
-
-Tela de detalhe, 
-Tela de laboratórios, filtro e infinite scroll
