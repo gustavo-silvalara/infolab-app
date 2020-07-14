@@ -15,6 +15,8 @@ class Laboratorio {
   String _cidade;
   String _campus;
   String _site;
+  String _grandeArea;
+  String _area;
 
   Laboratorio();
 
@@ -33,6 +35,8 @@ class Laboratorio {
     this.cidade = documentSnapshot["cidade"];
     this.campus = documentSnapshot["campus"];
     this.site = documentSnapshot["site"];
+    this.grandeArea = documentSnapshot["grandeArea"];
+    this.area = documentSnapshot["area"];
   }
 
   Laboratorio.gerarId() {
@@ -58,6 +62,8 @@ class Laboratorio {
       "cidade": this.cidade,
       "campus": this.campus,
       "site": this.site,
+      "grandeArea": this.grandeArea,
+      "area": this.area,
     };
 
     return map;
@@ -145,5 +151,17 @@ class Laboratorio {
 
   set site(String value) {
     _site = value;
+  }
+
+  String get grandeArea => _grandeArea;
+
+  set grandeArea(String value) {
+    _grandeArea = value;
+  }
+
+  String get area => _area;
+
+  set area(String value) {
+    _area = value;
   }
 }

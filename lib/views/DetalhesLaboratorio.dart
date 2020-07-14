@@ -158,15 +158,14 @@ class _DetalhesLaboratorioState extends State<DetalhesLaboratorio> {
                     Padding(
                       padding: EdgeInsets.only(bottom: 70),
                       child: GestureDetector(
-                        child: Text(
-                          _laboratorio.site,
-                          style:
-                              TextStyle(fontSize: 18, color: Colors.lightBlue),
-                        ),
-                        onTap: () {
-                          _abrirSite(_laboratorio.site);
-                        },
-                      ),
+                          child: Text(
+                            _laboratorio.site,
+                            style: TextStyle(
+                                fontSize: 18, color: Colors.lightBlue),
+                          ),
+                          onTap: () {
+                            _abrirSite(_laboratorio.site);
+                          }),
                     ),
                   ],
                 ),
