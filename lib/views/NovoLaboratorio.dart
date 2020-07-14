@@ -70,6 +70,31 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
     String idUsuarioLogado = usuarioLogado.uid;
 
     Firestore db = Firestore.instance;
+
+    _laboratorio.filtro = _laboratorio.nome +
+        ' ' +
+        _laboratorio.responsavel +
+        ' ' +
+        _laboratorio.email +
+        ' ' +
+        _laboratorio.equipamentos +
+        ' ' +
+        _laboratorio.atividades +
+        ' ' +
+        _laboratorio.estado +
+        ' ' +
+        _laboratorio.cidade +
+        ' ' +
+        _laboratorio.instituto +
+        ' ' +
+        _laboratorio.grandeArea +
+        ' ' +
+        _laboratorio.campus +
+        ' ' +
+        _laboratorio.area +
+        ' ' +
+        _laboratorio.categoria;
+
     db
         .collection("laboratorios")
         .document(_laboratorio.id)

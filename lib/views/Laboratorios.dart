@@ -219,7 +219,22 @@ class _LaboratoriosState extends State<Laboratorios> {
                     break;
                   case ConnectionState.active:
                   case ConnectionState.done:
+                    List<DocumentSnapshot> documentos =
+                        new List<DocumentSnapshot>();
                     QuerySnapshot querySnapshot = snapshot.data;
+                    if (_controllerPesquisa.text.length >= 2) {
+                      querySnapshot.documents.forEach((element) {
+                        Laboratorio laboratorio =
+                            Laboratorio.fromDocumentSnapshot(element);
+                        if (laboratorio.filtro != null &&
+                            laboratorio.filtro
+                                .contains(_controllerPesquisa.text)) {
+                          documentos.add(element);
+                        }
+                      });
+                    } else {
+                      documentos = querySnapshot.documents;
+                    }
                     if (querySnapshot.documents.length == 0) {
                       return Container(
                         padding: EdgeInsets.all(25),
@@ -232,37 +247,23 @@ class _LaboratoriosState extends State<Laboratorios> {
                     }
                     return Expanded(
                       child: ListView.builder(
-                          itemCount: querySnapshot.documents.length,
+                          itemCount: documentos.length,
                           itemBuilder: (_, indice) {
                             List<DocumentSnapshot> laboratorios =
-                                querySnapshot.documents.toList();
+                                documentos.toList();
                             DocumentSnapshot documentSnapshot =
                                 laboratorios[indice];
                             Laboratorio laboratorio =
                                 Laboratorio.fromDocumentSnapshot(
                                     documentSnapshot);
-                            if (_controllerPesquisa.text.length < 2) {
-                              return ItemLaboratorio(
-                                laboratorio: laboratorio,
-                                onTapItem: () {
-                                  Navigator.pushNamed(
-                                      context, "/detalhes-laboratorio",
-                                      arguments: laboratorio);
-                                },
-                              );
-                            } else {
-                              if (laboratorio.filtro.toUpperCase().contains(
-                                  _controllerPesquisa.text.toUpperCase())) {
-                                return ItemLaboratorio(
-                                  laboratorio: laboratorio,
-                                  onTapItem: () {
-                                    Navigator.pushNamed(
-                                        context, "/detalhes-laboratorio",
-                                        arguments: laboratorio);
-                                  },
-                                );
-                              }
-                            }
+                            return ItemLaboratorio(
+                              laboratorio: laboratorio,
+                              onTapItem: () {
+                                Navigator.pushNamed(
+                                    context, "/detalhes-laboratorio",
+                                    arguments: laboratorio);
+                              },
+                            );
                           }),
                     );
                 }
