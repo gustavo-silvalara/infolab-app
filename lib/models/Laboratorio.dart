@@ -17,6 +17,7 @@ class Laboratorio {
   String _site;
   String _grandeArea;
   String _area;
+  String _instituto;
 
   Laboratorio();
 
@@ -37,6 +38,7 @@ class Laboratorio {
     this.site = documentSnapshot["site"];
     this.grandeArea = documentSnapshot["grandeArea"];
     this.area = documentSnapshot["area"];
+    this.instituto = documentSnapshot["instituto"];
   }
 
   Laboratorio.gerarId() {
@@ -64,6 +66,7 @@ class Laboratorio {
       "site": this.site,
       "grandeArea": this.grandeArea,
       "area": this.area,
+      "instituto": this.instituto,
     };
 
     return map;
@@ -163,5 +166,11 @@ class Laboratorio {
 
   set area(String value) {
     _area = value;
+  }
+
+  String get instituto => _instituto;
+
+  set instituto(String value) {
+    _instituto = value;
   }
 }

@@ -83,17 +83,13 @@ class _DetalhesLaboratorioState extends State<DetalhesLaboratorio> {
                       style:
                           TextStyle(fontSize: 25, fontWeight: FontWeight.w400),
                     ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 16),
-                      child: Divider(),
-                    ),
                     Text(
-                      "Equipamentos",
+                      "${_laboratorio.grandeArea}",
                       style:
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      "${_laboratorio.equipamentos}",
+                      "${_laboratorio.area}",
                       style: TextStyle(fontSize: 18),
                     ),
                     Padding(
@@ -107,6 +103,19 @@ class _DetalhesLaboratorioState extends State<DetalhesLaboratorio> {
                     ),
                     Text(
                       "${_laboratorio.atividades}",
+                      style: TextStyle(fontSize: 18),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 16),
+                      child: Divider(),
+                    ),
+                    Text(
+                      "Equipamentos",
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      "${_laboratorio.equipamentos}",
                       style: TextStyle(fontSize: 18),
                     ),
                     Padding(
@@ -144,14 +153,28 @@ class _DetalhesLaboratorioState extends State<DetalhesLaboratorio> {
                     Padding(
                       padding: EdgeInsets.only(bottom: 0),
                       child: Text(
+                        "Estado: ${_laboratorio.estado}",
+                        style: TextStyle(fontSize: 18),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 0),
+                      child: Text(
                         "Cidade: ${_laboratorio.cidade}",
+                        style: TextStyle(fontSize: 18),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 0),
+                      child: Text(
+                        "Instituição: ${_laboratorio.instituto}",
                         style: TextStyle(fontSize: 18),
                       ),
                     ),
                     Padding(
                       padding: EdgeInsets.only(bottom: 10),
                       child: Text(
-                        "Campus: ${_laboratorio.campus}",
+                        "Campus ${_laboratorio.campus}",
                         style: TextStyle(fontSize: 18),
                       ),
                     ),

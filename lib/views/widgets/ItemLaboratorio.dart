@@ -68,7 +68,7 @@ class ItemLaboratorio extends StatelessWidget {
                     color: Colors.white,
                     padding: EdgeInsets.all(10),
                     onPressed: this.onPressedEdit,
-                    child: Icon(Icons.edit, color: Colors.black),
+                    child: Icon(Icons.delete, color: Colors.red),
                   ),
                 ),
             ],

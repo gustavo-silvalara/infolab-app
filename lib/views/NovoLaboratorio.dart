@@ -71,14 +71,13 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
 
     Firestore db = Firestore.instance;
     db
-        .collection("meus_laboratorios")
-        .document(idUsuarioLogado)
         .collection("laboratorios")
         .document(_laboratorio.id)
         .setData(_laboratorio.toMap())
         .then((_) {
-      //salvar lab público
       db
+          .collection("meus_laboratorios")
+          .document(idUsuarioLogado)
           .collection("laboratorios")
           .document(_laboratorio.id)
           .setData(_laboratorio.toMap())
@@ -251,6 +250,91 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
                     );
                   },
                 ),
+                Padding(
+                  padding: EdgeInsets.only(bottom: 15, top: 15),
+                  child: CustomInput(
+                    hint: "Nome*",
+                    onSaved: (nome) {
+                      _laboratorio.nome = nome;
+                    },
+                    validator: (valor) {
+                      return Validador()
+                          .add(Validar.OBRIGATORIO, msg: "Campo obrigatório")
+                          .valido(valor);
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(bottom: 15, top: 15),
+                  child: CustomInput(
+                    hint: "Responsável*",
+                    onSaved: (responsavel) {
+                      _laboratorio.responsavel = responsavel;
+                    },
+                    validator: (valor) {
+                      return Validador()
+                          .add(Validar.OBRIGATORIO, msg: "Campo obrigatório")
+                          .valido(valor);
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(bottom: 15, top: 15),
+                  child: CustomInput(
+                    hint: "Email*",
+                    onSaved: (email) {
+                      _laboratorio.email = email;
+                    },
+                    type: TextInputType.emailAddress,
+                    validator: (valor) {
+                      return Validador()
+                          .add(Validar.OBRIGATORIO, msg: "Campo obrigatório")
+                          .valido(valor);
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(bottom: 15),
+                  child: CustomInput(
+                    hint: "Atividades*",
+                    onSaved: (atividades) {
+                      _laboratorio.atividades = atividades;
+                    },
+                    maxLines: 3,
+                    validator: (valor) {
+                      return Validador()
+                          .add(Validar.OBRIGATORIO, msg: "Campo obrigatório")
+                          .maxLength(200, msg: "Máximo de 200 caracteres")
+                          .valido(valor);
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(bottom: 15),
+                  child: CustomInput(
+                    hint: "Equipamentos*",
+                    onSaved: (equipamentos) {
+                      _laboratorio.equipamentos = equipamentos;
+                    },
+                    maxLines: 3,
+                    validator: (valor) {
+                      return Validador()
+                          .add(Validar.OBRIGATORIO, msg: "Campo obrigatório")
+                          .maxLength(200, msg: "Máximo de 200 caracteres")
+                          .valido(valor);
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(bottom: 15, top: 15),
+                  child: CustomInput(
+                    hint: "Site",
+                    onSaved: (site) {
+                      _laboratorio.site = site;
+                    },
+                    type: TextInputType.text,
+                  ),
+                ),
                 Row(
                   children: <Widget>[
                     Expanded(
@@ -285,8 +369,9 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
                           isExpanded: true,
                           value: _itemSelecionadoCategoria,
                           hint: Text("Categorias"),
-                          onSaved: (categoria) {
-                            _laboratorio.categoria = categoria;
+                          onSaved: (grandeArea) {
+                            _laboratorio.grandeArea = grandeArea;
+                            _laboratorio.categoria = grandeArea;
                           },
                           style: TextStyle(color: Colors.black, fontSize: 20),
                           items: _listaItensDropCategorias,
@@ -309,10 +394,11 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
                 Padding(
                   padding: EdgeInsets.only(bottom: 15, top: 15),
                   child: CustomInput(
-                    hint: "Nome",
-                    onSaved: (nome) {
-                      _laboratorio.nome = nome;
+                    hint: "Instituto*",
+                    onSaved: (instituto) {
+                      _laboratorio.instituto = instituto;
                     },
+                    type: TextInputType.text,
                     validator: (valor) {
                       return Validador()
                           .add(Validar.OBRIGATORIO, msg: "Campo obrigatório")
@@ -323,10 +409,11 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
                 Padding(
                   padding: EdgeInsets.only(bottom: 15, top: 15),
                   child: CustomInput(
-                    hint: "Responsável",
-                    onSaved: (responsavel) {
-                      _laboratorio.responsavel = responsavel;
+                    hint: "Cidade*",
+                    onSaved: (cidade) {
+                      _laboratorio.cidade = cidade;
                     },
+                    type: TextInputType.text,
                     validator: (valor) {
                       return Validador()
                           .add(Validar.OBRIGATORIO, msg: "Campo obrigatório")
@@ -337,11 +424,11 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
                 Padding(
                   padding: EdgeInsets.only(bottom: 15, top: 15),
                   child: CustomInput(
-                    hint: "Email",
-                    onSaved: (email) {
-                      _laboratorio.email = email;
+                    hint: "Campus*",
+                    onSaved: (campus) {
+                      _laboratorio.campus = campus;
                     },
-                    type: TextInputType.emailAddress,
+                    type: TextInputType.text,
                     validator: (valor) {
                       return Validador()
                           .add(Validar.OBRIGATORIO, msg: "Campo obrigatório")
@@ -350,17 +437,16 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(bottom: 15),
+                  padding: EdgeInsets.only(bottom: 15, top: 15),
                   child: CustomInput(
-                    hint: "Descrição (200 caracteres)",
-                    onSaved: (descricao) {
-                      _laboratorio.descricao = descricao;
+                    hint: "Área*",
+                    onSaved: (area) {
+                      _laboratorio.area = area;
                     },
-                    maxLines: null,
+                    type: TextInputType.text,
                     validator: (valor) {
                       return Validador()
                           .add(Validar.OBRIGATORIO, msg: "Campo obrigatório")
-                          .maxLength(200, msg: "Máximo de 200 caracteres")
                           .valido(valor);
                     },
                   ),

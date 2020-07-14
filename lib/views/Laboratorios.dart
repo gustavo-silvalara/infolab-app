@@ -197,9 +197,9 @@ class _LaboratoriosState extends State<Laboratorios> {
                         value: _itemSelecionadoCategoria,
                         items: _listaItensDropCategorias,
                         style: TextStyle(fontSize: 22, color: Colors.black),
-                        onChanged: (categoria) {
+                        onChanged: (grandeArea) {
                           setState(() {
-                            _itemSelecionadoCategoria = categoria;
+                            _itemSelecionadoCategoria = grandeArea;
                             _filtrarLaboratorios();
                           });
                         },

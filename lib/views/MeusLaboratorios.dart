@@ -25,8 +25,11 @@ class _MeusLaboratoriosState extends State<MeusLaboratorios> {
     await _recuperaDadosUsuarioLogado();
 
     Firestore db = Firestore.instance;
-    Stream<QuerySnapshot> stream =
-        db.collection('meus_laboratorios').snapshots();
+    Stream<QuerySnapshot> stream = db
+        .collection("meus_laboratorios")
+        .document(_idUsuarioLogado)
+        .collection("laboratorios")
+        .snapshots();
     stream.listen((dados) {
       _controller.add(dados);
     });
@@ -86,9 +89,11 @@ class _MeusLaboratoriosState extends State<MeusLaboratorios> {
                     DocumentSnapshot documentSnapshot = laboratorios[indice];
                     Laboratorio laboratorio =
                         Laboratorio.fromDocumentSnapshot(documentSnapshot);
-                    return ItemLaboratorio(
-                      laboratorio: laboratorio,
-                      onPressedEdit: () {
+                    return GestureDetector(
+                      child: ItemLaboratorio(
+                        laboratorio: laboratorio,
+                      ),
+                      onTap: () {
                         Navigator.pushNamed(context, "/detalhes-laboratorio",
                             arguments: laboratorio);
                       },
