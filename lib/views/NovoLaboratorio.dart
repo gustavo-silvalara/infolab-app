@@ -5,11 +5,17 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:infolab_app/main.dart';
+import 'package:infolab_app/models/Area.dart';
+import 'package:infolab_app/models/Campus.dart';
+import 'package:infolab_app/models/Cidade.dart';
+import 'package:infolab_app/models/Instituto.dart';
 import 'package:infolab_app/models/Laboratorio.dart';
 import 'package:infolab_app/util/Configuracoes.dart';
 import 'package:infolab_app/views/widgets/BotaoCustomizado.dart';
 import 'package:infolab_app/views/widgets/CustomInput.dart';
 import 'package:validadores/Validador.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 class NovoLaboratorio extends StatefulWidget {
   @override
@@ -113,6 +119,45 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
     });
   }
 
+  _salvarInstituto(Instituto instituto) async {
+    Firestore db = Firestore.instance;
+    if (_itemSelecionadoEstado != null &&
+        instituto != null &&
+        (instituto.nome.isNotEmpty)) {
+      db
+          .collection("institutos")
+          .document(instituto.id)
+          .setData(instituto.toMap());
+    }
+  }
+
+  _salvarCidade(Cidade cidade) async {
+    Firestore db = Firestore.instance;
+    if (_itemSelecionadoEstado != null &&
+        cidade != null &&
+        (cidade.nome.isNotEmpty)) {
+      db.collection("cidades").document(cidade.id).setData(cidade.toMap());
+    }
+  }
+
+  _salvarCampus(Campus campus) async {
+    Firestore db = Firestore.instance;
+    if (_itemSelecionadoEstado != null &&
+        campus != null &&
+        (campus.nome.isNotEmpty)) {
+      db.collection("campus").document(campus.id).setData(campus.toMap());
+    }
+  }
+
+  _salvarArea(Area area) async {
+    Firestore db = Firestore.instance;
+    if (_itemSelecionadoCategoria != null &&
+        area != null &&
+        (area.nome.isNotEmpty)) {
+      db.collection("areas").document(area.id).setData(area.toMap());
+    }
+  }
+
   Future _uploadImagens() async {
     FirebaseStorage storage = FirebaseStorage.instance;
     StorageReference pastaRaiz = storage.ref();
@@ -147,6 +192,73 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
     //Estados
     _listaItensDropEstados = Configuracoes.getEstados();
   }
+
+  Future<List<dynamic>> getSuggestionInstituto(String suggestion) async {
+    Firestore db = Firestore.instance;
+    var querySnap = await db.collection("institutos").getDocuments();
+    var docs = [];
+    if (_itemSelecionadoEstado != null) {
+      querySnap.documents.forEach((e) => {
+            if (e.data['estado'] == _itemSelecionadoEstado &&
+                e.data['nome'].contains(suggestion))
+              docs.add(e)
+          });
+    }
+    return docs;
+  }
+
+  Future<List<dynamic>> getSuggestionCidades(String suggestion) async {
+    Firestore db = Firestore.instance;
+    var querySnap = await db.collection("cidades").getDocuments();
+    var docs = [];
+    if (_itemSelecionadoEstado != null) {
+      querySnap.documents.forEach((e) => {
+            if (e.data['estado'] == _itemSelecionadoEstado &&
+                e.data['nome'].contains(suggestion))
+              docs.add(e)
+          });
+    }
+    return docs;
+  }
+
+  Future<List<dynamic>> getSuggestionCampus(String suggestion) async {
+    Firestore db = Firestore.instance;
+    var querySnap = await db.collection("campus").getDocuments();
+    var docs = [];
+    if (_itemSelecionadoEstado != null) {
+      querySnap.documents.forEach((e) => {
+            if (e.data['estado'] == _itemSelecionadoEstado &&
+                e.data['nome'].contains(suggestion))
+              docs.add(e)
+          });
+    }
+    return docs;
+  }
+
+  Future<List<dynamic>> getSuggestionArea(String suggestion) async {
+    Firestore db = Firestore.instance;
+    var querySnap = await db.collection("areas").getDocuments();
+    var docs = [];
+    if (_itemSelecionadoCategoria != null) {
+      querySnap.documents.forEach((e) => {
+            if (e.data['grandeArea'] == _itemSelecionadoCategoria &&
+                e.data['nome'].contains(suggestion))
+              docs.add(e)
+          });
+    }
+    return docs;
+  }
+
+  final TextEditingController _typeAheadInstitutoController =
+      TextEditingController(text: "Instituto*");
+  final TextEditingController _typeAheadCidadeController =
+      TextEditingController(text: "Cidade*");
+  final TextEditingController _typeAheadCampusController =
+      TextEditingController(text: "Campus*");
+  final TextEditingController _typeAheadAreaController =
+      TextEditingController(text: "Área*");
+
+  final focus = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -369,6 +481,7 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
                           value: _itemSelecionadoEstado,
                           hint: Text("Estados"),
                           onSaved: (estado) {
+                            print(estado);
                             _laboratorio.estado = estado;
                           },
                           style: TextStyle(color: Colors.black, fontSize: 20),
@@ -418,61 +531,236 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
                 ),
                 Padding(
                   padding: EdgeInsets.only(bottom: 15, top: 15),
-                  child: CustomInput(
-                    hint: "Instituto*",
-                    onSaved: (instituto) {
-                      _laboratorio.instituto = instituto;
+                  child: TypeAheadField(
+                    noItemsFoundBuilder: (context) {
+                      return RaisedButton(
+                        color: Colors.transparent,
+                        disabledColor: Colors.transparent,
+                        splashColor: Colors.transparent,
+                        focusColor: Colors.transparent,
+                        hoverColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        disabledTextColor: Colors.transparent,
+                        elevation: 0.0,
+                        child: Text(
+                          "Adicionar " +
+                              this._typeAheadInstitutoController.text,
+                          style: TextStyle(
+                              color: Colors.black,
+                              backgroundColor: Colors.transparent),
+                        ),
+                        onPressed: () {
+                          if (_itemSelecionadoEstado != null) {
+                            Instituto instituto = Instituto.gerarId();
+                            instituto.estado = _itemSelecionadoEstado;
+                            instituto.nome = _laboratorio.instituto;
+                            _salvarInstituto(instituto);
+                            FocusScope.of(context).requestFocus(focus);
+                          }
+                        },
+                      );
                     },
-                    type: TextInputType.text,
-                    validator: (valor) {
-                      return Validador()
-                          .add(Validar.OBRIGATORIO, msg: "Campo obrigatório")
-                          .valido(valor);
+                    textFieldConfiguration: TextFieldConfiguration(
+                        onTap: () {
+                          this._typeAheadInstitutoController.text = "";
+                        },
+                        controller: this._typeAheadInstitutoController,
+                        onChanged: (_) {
+                          _laboratorio.instituto =
+                              this._typeAheadInstitutoController.text;
+                        },
+                        decoration:
+                            InputDecoration(border: OutlineInputBorder())),
+                    suggestionsCallback: (pattern) async {
+                      return await getSuggestionInstituto(pattern);
+                    },
+                    itemBuilder: (context, suggestion) {
+                      return ListTile(
+                        title: Text(suggestion['nome']),
+                      );
+                    },
+                    onSuggestionSelected: (suggestion) {
+                      _laboratorio.instituto =
+                          this._typeAheadInstitutoController.text;
+                      if (_itemSelecionadoEstado != null) {
+                        this._typeAheadInstitutoController.text =
+                            suggestion['nome'];
+                      }
                     },
                   ),
                 ),
                 Padding(
                   padding: EdgeInsets.only(bottom: 15, top: 15),
-                  child: CustomInput(
-                    hint: "Cidade*",
-                    onSaved: (cidade) {
-                      _laboratorio.cidade = cidade;
+                  child: TypeAheadField(
+                    noItemsFoundBuilder: (context) {
+                      return RaisedButton(
+                        color: Colors.transparent,
+                        disabledColor: Colors.transparent,
+                        splashColor: Colors.transparent,
+                        focusColor: Colors.transparent,
+                        hoverColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        disabledTextColor: Colors.transparent,
+                        elevation: 0.0,
+                        child: Text(
+                          "Adicionar " + this._typeAheadCidadeController.text,
+                          style: TextStyle(
+                              color: Colors.black,
+                              backgroundColor: Colors.transparent),
+                        ),
+                        onPressed: () {
+                          if (_itemSelecionadoEstado != null) {
+                            Cidade cidade = Cidade.gerarId();
+                            cidade.estado = _itemSelecionadoEstado;
+                            cidade.nome = _laboratorio.cidade;
+                            _salvarCidade(cidade);
+                            FocusScope.of(context).requestFocus(focus);
+                          }
+                        },
+                      );
                     },
-                    type: TextInputType.text,
-                    validator: (valor) {
-                      return Validador()
-                          .add(Validar.OBRIGATORIO, msg: "Campo obrigatório")
-                          .valido(valor);
+                    textFieldConfiguration: TextFieldConfiguration(
+                        onTap: () {
+                          this._typeAheadCidadeController.text = "";
+                        },
+                        controller: this._typeAheadCidadeController,
+                        onChanged: (_) {
+                          _laboratorio.cidade =
+                              this._typeAheadCidadeController.text;
+                        },
+                        decoration:
+                            InputDecoration(border: OutlineInputBorder())),
+                    suggestionsCallback: (pattern) async {
+                      return await getSuggestionCidades(pattern);
+                    },
+                    itemBuilder: (context, suggestion) {
+                      return ListTile(
+                        title: Text(suggestion['nome']),
+                      );
+                    },
+                    onSuggestionSelected: (suggestion) {
+                      _laboratorio.cidade =
+                          this._typeAheadCidadeController.text;
+                      if (_itemSelecionadoEstado != null) {
+                        this._typeAheadCidadeController.text =
+                            suggestion['nome'];
+                      }
                     },
                   ),
                 ),
                 Padding(
                   padding: EdgeInsets.only(bottom: 15, top: 15),
-                  child: CustomInput(
-                    hint: "Campus*",
-                    onSaved: (campus) {
-                      _laboratorio.campus = campus;
+                  child: TypeAheadField(
+                    noItemsFoundBuilder: (context) {
+                      return RaisedButton(
+                        color: Colors.transparent,
+                        disabledColor: Colors.transparent,
+                        splashColor: Colors.transparent,
+                        focusColor: Colors.transparent,
+                        hoverColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        disabledTextColor: Colors.transparent,
+                        elevation: 0.0,
+                        child: Text(
+                          "Adicionar " + this._typeAheadCampusController.text,
+                          style: TextStyle(
+                              color: Colors.black,
+                              backgroundColor: Colors.transparent),
+                        ),
+                        onPressed: () {
+                          if (_itemSelecionadoEstado != null) {
+                            Campus campus = Campus.gerarId();
+                            campus.estado = _itemSelecionadoEstado;
+                            campus.nome = _laboratorio.campus;
+                            _salvarCampus(campus);
+                            FocusScope.of(context).requestFocus(focus);
+                          }
+                        },
+                      );
                     },
-                    type: TextInputType.text,
-                    validator: (valor) {
-                      return Validador()
-                          .add(Validar.OBRIGATORIO, msg: "Campo obrigatório")
-                          .valido(valor);
+                    textFieldConfiguration: TextFieldConfiguration(
+                        onTap: () {
+                          this._typeAheadCampusController.text = "";
+                        },
+                        controller: this._typeAheadCampusController,
+                        onChanged: (_) {
+                          _laboratorio.campus =
+                              this._typeAheadCampusController.text;
+                        },
+                        decoration:
+                            InputDecoration(border: OutlineInputBorder())),
+                    suggestionsCallback: (pattern) async {
+                      return await getSuggestionCampus(pattern);
+                    },
+                    itemBuilder: (context, suggestion) {
+                      return ListTile(
+                        title: Text(suggestion['nome']),
+                      );
+                    },
+                    onSuggestionSelected: (suggestion) {
+                      _laboratorio.campus =
+                          this._typeAheadCampusController.text;
+                      if (_itemSelecionadoEstado != null) {
+                        this._typeAheadCampusController.text =
+                            suggestion['nome'];
+                      }
                     },
                   ),
                 ),
                 Padding(
                   padding: EdgeInsets.only(bottom: 15, top: 15),
-                  child: CustomInput(
-                    hint: "Área*",
-                    onSaved: (area) {
-                      _laboratorio.area = area;
+                  child: TypeAheadField(
+                    noItemsFoundBuilder: (context) {
+                      return RaisedButton(
+                        color: Colors.transparent,
+                        disabledColor: Colors.transparent,
+                        splashColor: Colors.transparent,
+                        focusColor: Colors.transparent,
+                        hoverColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        disabledTextColor: Colors.transparent,
+                        elevation: 0.0,
+                        child: Text(
+                          "Adicionar " + this._typeAheadAreaController.text,
+                          style: TextStyle(
+                              color: Colors.black,
+                              backgroundColor: Colors.transparent),
+                        ),
+                        onPressed: () {
+                          if (_itemSelecionadoCategoria != null) {
+                            Area area = Area.gerarId();
+                            area.grandeArea = _itemSelecionadoCategoria;
+                            area.nome = _laboratorio.area;
+                            _salvarArea(area);
+                            FocusScope.of(context).requestFocus(focus);
+                          }
+                        },
+                      );
                     },
-                    type: TextInputType.text,
-                    validator: (valor) {
-                      return Validador()
-                          .add(Validar.OBRIGATORIO, msg: "Campo obrigatório")
-                          .valido(valor);
+                    textFieldConfiguration: TextFieldConfiguration(
+                        onTap: () {
+                          this._typeAheadAreaController.text = "";
+                        },
+                        controller: this._typeAheadAreaController,
+                        onChanged: (_) {
+                          _laboratorio.area =
+                              this._typeAheadAreaController.text;
+                        },
+                        decoration:
+                            InputDecoration(border: OutlineInputBorder())),
+                    suggestionsCallback: (pattern) async {
+                      return await getSuggestionArea(pattern);
+                    },
+                    itemBuilder: (context, suggestion) {
+                      return ListTile(
+                        title: Text(suggestion['nome']),
+                      );
+                    },
+                    onSuggestionSelected: (suggestion) {
+                      _laboratorio.area = this._typeAheadAreaController.text;
+                      if (_itemSelecionadoCategoria != null) {
+                        this._typeAheadAreaController.text = suggestion['nome'];
+                      }
                     },
                   ),
                 ),
