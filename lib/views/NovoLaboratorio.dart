@@ -80,7 +80,7 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
                       _selecionarImagemGaleria(0);
                     }),
                 ListTile(
-                  leading: new Icon(Icons.photo_album),
+                  leading: new Icon(Icons.photo_library),
                   title: new Text('Galeria'),
                   onTap: () {
                     _selecionarImagemGaleria(1);
