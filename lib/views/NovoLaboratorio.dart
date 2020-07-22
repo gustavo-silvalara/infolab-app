@@ -33,9 +33,11 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
   String _itemSelecionadoEstado;
   String _itemSelecionadoCategoria;
 
-  _selecionarImagemGaleria() async {
-    File imagemSelecionada =
-        await ImagePicker.pickImage(source: ImageSource.gallery);
+  Map<String, String> grandesAreas = new Map();
+
+  _selecionarImagemGaleria(int imageSource) async {
+    File imagemSelecionada = await ImagePicker.pickImage(
+        source: imageSource == 0 ? ImageSource.camera : ImageSource.gallery);
 
     if (imagemSelecionada != null) {
       setState(() {
@@ -58,6 +60,32 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
                   height: 20,
                 ),
                 Text("Salvando Laboratório...")
+              ],
+            ),
+          );
+        });
+  }
+
+  void _modalBottomSheet(context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc) {
+          return Container(
+            child: Wrap(
+              children: <Widget>[
+                ListTile(
+                    leading: new Icon(Icons.camera),
+                    title: new Text('Câmera'),
+                    onTap: () {
+                      _selecionarImagemGaleria(0);
+                    }),
+                ListTile(
+                  leading: new Icon(Icons.photo_album),
+                  title: new Text('Galeria'),
+                  onTap: () {
+                    _selecionarImagemGaleria(1);
+                  },
+                ),
               ],
             ),
           );
@@ -181,7 +209,17 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
   void initState() {
     super.initState();
     _carregarItensDropdown();
-
+    this.grandesAreas = {
+      'exatas': "Ciências Exatas e da Terra",
+      'biologicas': "Ciências Biológicas",
+      'engenharias': "Engenharias",
+      "saude": "Ciências da Saúde",
+      "agrarias": "Ciências Agrárias",
+      "sociais": "Ciências Sociais",
+      "humanas": "Ciências Humanas",
+      "letras": "Linguística, Letras e Artes",
+      "outros": "Outros"
+    };
     _laboratorio = Laboratorio.gerarId();
   }
 
@@ -297,7 +335,7 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
                                         EdgeInsets.symmetric(horizontal: 8),
                                     child: GestureDetector(
                                       onTap: () {
-                                        _selecionarImagemGaleria();
+                                        _modalBottomSheet(context);
                                       },
                                       child: CircleAvatar(
                                         backgroundColor: Colors.grey[400],
@@ -508,7 +546,8 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
                           value: _itemSelecionadoCategoria,
                           hint: Text("Categorias"),
                           onSaved: (grandeArea) {
-                            _laboratorio.grandeArea = grandeArea;
+                            _laboratorio.grandeArea =
+                                this.grandesAreas[grandeArea];
                             _laboratorio.categoria = grandeArea;
                           },
                           style: TextStyle(color: Colors.black, fontSize: 20),
@@ -565,9 +604,8 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
                           this._typeAheadInstitutoController.text = "";
                         },
                         controller: this._typeAheadInstitutoController,
-                        onChanged: (_) {
-                          _laboratorio.instituto =
-                              this._typeAheadInstitutoController.text;
+                        onChanged: (instituto) {
+                          _laboratorio.instituto = instituto;
                         },
                         decoration:
                             InputDecoration(border: OutlineInputBorder())),
@@ -580,8 +618,7 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
                       );
                     },
                     onSuggestionSelected: (suggestion) {
-                      _laboratorio.instituto =
-                          this._typeAheadInstitutoController.text;
+                      _laboratorio.instituto = suggestion['nome'];
                       if (_itemSelecionadoEstado != null) {
                         this._typeAheadInstitutoController.text =
                             suggestion['nome'];
@@ -639,8 +676,7 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
                       );
                     },
                     onSuggestionSelected: (suggestion) {
-                      _laboratorio.cidade =
-                          this._typeAheadCidadeController.text;
+                      _laboratorio.cidade = suggestion['nome'];
                       if (_itemSelecionadoEstado != null) {
                         this._typeAheadCidadeController.text =
                             suggestion['nome'];
@@ -698,8 +734,7 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
                       );
                     },
                     onSuggestionSelected: (suggestion) {
-                      _laboratorio.campus =
-                          this._typeAheadCampusController.text;
+                      _laboratorio.campus = suggestion['nome'];
                       if (_itemSelecionadoEstado != null) {
                         this._typeAheadCampusController.text =
                             suggestion['nome'];
@@ -757,7 +792,7 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
                       );
                     },
                     onSuggestionSelected: (suggestion) {
-                      _laboratorio.area = this._typeAheadAreaController.text;
+                      _laboratorio.area = suggestion['nome'];
                       if (_itemSelecionadoCategoria != null) {
                         this._typeAheadAreaController.text = suggestion['nome'];
                       }
