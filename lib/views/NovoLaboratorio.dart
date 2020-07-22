@@ -288,13 +288,13 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
   }
 
   final TextEditingController _typeAheadInstitutoController =
-      TextEditingController(text: "Instituto*");
+      TextEditingController();
   final TextEditingController _typeAheadCidadeController =
-      TextEditingController(text: "Cidade*");
+      TextEditingController();
   final TextEditingController _typeAheadCampusController =
-      TextEditingController(text: "Campus*");
+      TextEditingController();
   final TextEditingController _typeAheadAreaController =
-      TextEditingController(text: "Área*");
+      TextEditingController();
 
   final focus = FocusNode();
 
@@ -600,15 +600,19 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
                       );
                     },
                     textFieldConfiguration: TextFieldConfiguration(
-                        onTap: () {
-                          this._typeAheadInstitutoController.text = "";
-                        },
-                        controller: this._typeAheadInstitutoController,
-                        onChanged: (instituto) {
-                          _laboratorio.instituto = instituto;
-                        },
-                        decoration:
-                            InputDecoration(border: OutlineInputBorder())),
+                      style: TextStyle(fontSize: 20),
+                      onTap: () {
+                        this._typeAheadInstitutoController.text = "";
+                      },
+                      controller: this._typeAheadInstitutoController,
+                      onChanged: (instituto) {
+                        _laboratorio.instituto = instituto;
+                      },
+                      decoration: InputDecoration(
+                          contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
+                          border: OutlineInputBorder(),
+                          hintText: "Instituto*"),
+                    ),
                     suggestionsCallback: (pattern) async {
                       return await getSuggestionInstituto(pattern);
                     },
@@ -657,16 +661,20 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
                       );
                     },
                     textFieldConfiguration: TextFieldConfiguration(
-                        onTap: () {
-                          this._typeAheadCidadeController.text = "";
-                        },
-                        controller: this._typeAheadCidadeController,
-                        onChanged: (_) {
-                          _laboratorio.cidade =
-                              this._typeAheadCidadeController.text;
-                        },
-                        decoration:
-                            InputDecoration(border: OutlineInputBorder())),
+                      style: TextStyle(fontSize: 20),
+                      onTap: () {
+                        this._typeAheadCidadeController.text = "";
+                      },
+                      controller: this._typeAheadCidadeController,
+                      onChanged: (_) {
+                        _laboratorio.cidade =
+                            this._typeAheadCidadeController.text;
+                      },
+                      decoration: InputDecoration(
+                          contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
+                          border: OutlineInputBorder(),
+                          hintText: "Cidade*"),
+                    ),
                     suggestionsCallback: (pattern) async {
                       return await getSuggestionCidades(pattern);
                     },
@@ -715,16 +723,20 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
                       );
                     },
                     textFieldConfiguration: TextFieldConfiguration(
-                        onTap: () {
-                          this._typeAheadCampusController.text = "";
-                        },
-                        controller: this._typeAheadCampusController,
-                        onChanged: (_) {
-                          _laboratorio.campus =
-                              this._typeAheadCampusController.text;
-                        },
-                        decoration:
-                            InputDecoration(border: OutlineInputBorder())),
+                      style: TextStyle(fontSize: 20),
+                      onTap: () {
+                        this._typeAheadCampusController.text = "";
+                      },
+                      controller: this._typeAheadCampusController,
+                      onChanged: (_) {
+                        _laboratorio.campus =
+                            this._typeAheadCampusController.text;
+                      },
+                      decoration: InputDecoration(
+                          contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
+                          border: OutlineInputBorder(),
+                          hintText: "Campus*"),
+                    ),
                     suggestionsCallback: (pattern) async {
                       return await getSuggestionCampus(pattern);
                     },
@@ -773,16 +785,19 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
                       );
                     },
                     textFieldConfiguration: TextFieldConfiguration(
-                        onTap: () {
-                          this._typeAheadAreaController.text = "";
-                        },
-                        controller: this._typeAheadAreaController,
-                        onChanged: (_) {
-                          _laboratorio.area =
-                              this._typeAheadAreaController.text;
-                        },
-                        decoration:
-                            InputDecoration(border: OutlineInputBorder())),
+                      onTap: () {
+                        this._typeAheadAreaController.text = "";
+                      },
+                      controller: this._typeAheadAreaController,
+                      onChanged: (_) {
+                        _laboratorio.area = this._typeAheadAreaController.text;
+                      },
+                      style: TextStyle(fontSize: 20),
+                      decoration: InputDecoration(
+                          contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
+                          border: OutlineInputBorder(),
+                          hintText: "Área*"),
+                    ),
                     suggestionsCallback: (pattern) async {
                       return await getSuggestionArea(pattern);
                     },
