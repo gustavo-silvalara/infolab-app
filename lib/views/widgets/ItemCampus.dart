@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:infolab_app/models/Laboratorio.dart';
+import 'package:infolab_app/models/Campus.dart';
 
-class ItemLaboratorio extends StatelessWidget {
-  Laboratorio laboratorio;
+class ItemCampus extends StatelessWidget {
+  Campus campus;
   VoidCallback onTapItem;
   VoidCallback onPressedEdit;
 
-  ItemLaboratorio({
-    @required this.laboratorio,
+  ItemCampus({
+    @required this.campus,
     this.onTapItem,
     this.onPressedEdit,
   });
@@ -21,14 +21,6 @@ class ItemLaboratorio extends StatelessWidget {
           padding: EdgeInsets.all(12),
           child: Row(
             children: <Widget>[
-              SizedBox(
-                width: 120,
-                height: 120,
-                child: Image.network(
-                  laboratorio.fotos[0],
-                  fit: BoxFit.cover,
-                ),
-              ),
               Expanded(
                 flex: 3,
                 child: Padding(
@@ -37,25 +29,18 @@ class ItemLaboratorio extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        laboratorio.nome,
+                        campus.nome,
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        laboratorio.responsavel,
+                        campus.estado,
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        campus.cidade != null ? campus.cidade : "",
                         style: TextStyle(fontSize: 15),
-                      ),
-                      Text(
-                        laboratorio.email,
-                        style: TextStyle(fontSize: 13),
-                      ),
-                      Text(
-                        laboratorio.cidade + ' - ' + laboratorio.estado,
-                        style: TextStyle(fontSize: 15),
-                      ),
-                      Text(
-                        'Campus ' + laboratorio.campus,
-                        style: TextStyle(fontSize: 13),
                       ),
                     ],
                   ),

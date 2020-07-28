@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:infolab_app/models/Laboratorio.dart';
+import 'package:infolab_app/models/Instituto.dart';
 
-class ItemLaboratorio extends StatelessWidget {
-  Laboratorio laboratorio;
+class ItemInstituto extends StatelessWidget {
+  Instituto instituto;
   VoidCallback onTapItem;
   VoidCallback onPressedEdit;
 
-  ItemLaboratorio({
-    @required this.laboratorio,
+  ItemInstituto({
+    @required this.instituto,
     this.onTapItem,
     this.onPressedEdit,
   });
@@ -21,14 +21,6 @@ class ItemLaboratorio extends StatelessWidget {
           padding: EdgeInsets.all(12),
           child: Row(
             children: <Widget>[
-              SizedBox(
-                width: 120,
-                height: 120,
-                child: Image.network(
-                  laboratorio.fotos[0],
-                  fit: BoxFit.cover,
-                ),
-              ),
               Expanded(
                 flex: 3,
                 child: Padding(
@@ -37,25 +29,13 @@ class ItemLaboratorio extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        laboratorio.nome,
+                        instituto.nome,
+                        style: TextStyle(fontSize: 18),
+                      ),
+                      Text(
+                        instituto.estado,
                         style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        laboratorio.responsavel,
-                        style: TextStyle(fontSize: 15),
-                      ),
-                      Text(
-                        laboratorio.email,
-                        style: TextStyle(fontSize: 13),
-                      ),
-                      Text(
-                        laboratorio.cidade + ' - ' + laboratorio.estado,
-                        style: TextStyle(fontSize: 15),
-                      ),
-                      Text(
-                        'Campus ' + laboratorio.campus,
-                        style: TextStyle(fontSize: 13),
+                            fontSize: 15, fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),

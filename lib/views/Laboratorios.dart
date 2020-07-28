@@ -34,6 +34,21 @@ class _LaboratoriosState extends State<Laboratorios> {
       case 'Meus Laboratórios':
         Navigator.pushNamed(context, '/meus-laboratorios');
         break;
+      case 'Usuários':
+        Navigator.pushNamed(context, '/usuarios');
+        break;
+      case 'Áreas':
+        Navigator.pushNamed(context, '/areas');
+        break;
+      case 'Cidades':
+        Navigator.pushNamed(context, '/cidades');
+        break;
+      case 'Institutos':
+        Navigator.pushNamed(context, '/institutos');
+        break;
+      case 'Campus':
+        Navigator.pushNamed(context, '/campus');
+        break;
       case 'Entrar/Cadastrar':
         Navigator.pushReplacementNamed(context, '/login');
         break;
@@ -54,7 +69,15 @@ class _LaboratoriosState extends State<Laboratorios> {
     FirebaseUser usuarioLogado = await auth.currentUser();
     itensMenu = usuarioLogado == null
         ? ['Entrar/Cadastrar']
-        : ['Meus Laboratórios', 'Sair'];
+        : [
+            'Meus Laboratórios',
+            'Usuários',
+            'Áreas',
+            'Cidades',
+            'Institutos',
+            'Campus',
+            'Sair'
+          ];
   }
 
   _carregarItensDropdown() {

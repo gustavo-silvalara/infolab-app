@@ -1,11 +1,11 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:infolab_app/main.dart';
 import 'package:infolab_app/models/Area.dart';
 import 'package:infolab_app/models/Campus.dart';
 import 'package:infolab_app/models/Cidade.dart';
@@ -14,10 +14,15 @@ import 'package:infolab_app/models/Laboratorio.dart';
 import 'package:infolab_app/util/Configuracoes.dart';
 import 'package:infolab_app/views/widgets/BotaoCustomizado.dart';
 import 'package:infolab_app/views/widgets/CustomInput.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:validadores/Validador.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:http/http.dart' as http;
 
 class NovoLaboratorio extends StatefulWidget {
+  Laboratorio laboratorio;
+  NovoLaboratorio(this.laboratorio);
+
   @override
   _NovoLaboratorioState createState() => _NovoLaboratorioState();
 }
@@ -96,7 +101,7 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
     _abrirDialog(_dialogContext);
 
     //Upload imagens no Storage
-    await _uploadImagens();
+    if (widget.laboratorio == null) await _uploadImagens();
 
     //Salvar lab no Firestore
     FirebaseAuth auth = FirebaseAuth.instance;
@@ -220,7 +225,46 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
       "letras": "Linguística, Letras e Artes",
       "outros": "Outros"
     };
-    _laboratorio = Laboratorio.gerarId();
+    _laboratorio =
+        widget.laboratorio != null ? widget.laboratorio : Laboratorio.gerarId();
+    if (widget.laboratorio != null) {
+      setState(() {
+        this._listaImagens = [];
+      });
+
+      _nomeController = new TextEditingController(text: _laboratorio.nome);
+      _responsavelController =
+          new TextEditingController(text: _laboratorio.responsavel);
+      _emailController = new TextEditingController(text: _laboratorio.email);
+      _equipamentosController =
+          new TextEditingController(text: _laboratorio.equipamentos);
+      _atividadesController =
+          new TextEditingController(text: _laboratorio.atividades);
+      _siteController = new TextEditingController(
+          text: _laboratorio.site != null ? _laboratorio.site : "");
+      _typeAheadAreaController =
+          new TextEditingController(text: _laboratorio.area);
+      _typeAheadCampusController =
+          new TextEditingController(text: _laboratorio.campus);
+      _typeAheadCidadeController =
+          new TextEditingController(text: _laboratorio.cidade);
+      _typeAheadInstitutoController =
+          new TextEditingController(text: _laboratorio.instituto);
+      _itemSelecionadoCategoria = _laboratorio.categoria;
+      _itemSelecionadoEstado = _laboratorio.estado;
+      _laboratorio.fotos.forEach((e) async {
+        var rng = new Random();
+        Directory tempDir = await getTemporaryDirectory();
+        String tempPath = tempDir.path;
+        File file =
+            new File('$tempPath' + (rng.nextInt(100)).toString() + '.jpg');
+        http.Response response = await http.get(e);
+        await file.writeAsBytes(response.bodyBytes);
+        setState(() {
+          this._listaImagens.add(file);
+        });
+      });
+    }
   }
 
   _carregarItensDropdown() {
@@ -287,14 +331,16 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
     return docs;
   }
 
-  final TextEditingController _typeAheadInstitutoController =
-      TextEditingController();
-  final TextEditingController _typeAheadCidadeController =
-      TextEditingController();
-  final TextEditingController _typeAheadCampusController =
-      TextEditingController();
-  final TextEditingController _typeAheadAreaController =
-      TextEditingController();
+  TextEditingController _nomeController = TextEditingController();
+  TextEditingController _responsavelController = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _atividadesController = TextEditingController();
+  TextEditingController _equipamentosController = TextEditingController();
+  TextEditingController _siteController = TextEditingController();
+  TextEditingController _typeAheadInstitutoController = TextEditingController();
+  TextEditingController _typeAheadCidadeController = TextEditingController();
+  TextEditingController _typeAheadCampusController = TextEditingController();
+  TextEditingController _typeAheadAreaController = TextEditingController();
 
   final focus = FocusNode();
 
@@ -302,7 +348,9 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Novo Laboratório"),
+        title: Text(widget.laboratorio != null
+            ? "Editar Laboratório"
+            : "Novo Laboratório"),
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -428,6 +476,7 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
                 Padding(
                   padding: EdgeInsets.only(bottom: 15, top: 15),
                   child: CustomInput(
+                    controller: _nomeController,
                     hint: "Nome*",
                     onSaved: (nome) {
                       _laboratorio.nome = nome;
@@ -442,6 +491,7 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
                 Padding(
                   padding: EdgeInsets.only(bottom: 15, top: 15),
                   child: CustomInput(
+                    controller: _responsavelController,
                     hint: "Responsável*",
                     onSaved: (responsavel) {
                       _laboratorio.responsavel = responsavel;
@@ -457,6 +507,7 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
                   padding: EdgeInsets.only(bottom: 15, top: 15),
                   child: CustomInput(
                     hint: "Email*",
+                    controller: _emailController,
                     onSaved: (email) {
                       _laboratorio.email = email;
                     },
@@ -471,6 +522,7 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
                 Padding(
                   padding: EdgeInsets.only(bottom: 15),
                   child: CustomInput(
+                    controller: _atividadesController,
                     hint: "Atividades*",
                     onSaved: (atividades) {
                       _laboratorio.atividades = atividades;
@@ -487,6 +539,7 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
                 Padding(
                   padding: EdgeInsets.only(bottom: 15),
                   child: CustomInput(
+                    controller: _equipamentosController,
                     hint: "Equipamentos*",
                     onSaved: (equipamentos) {
                       _laboratorio.equipamentos = equipamentos;
@@ -504,6 +557,7 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
                   padding: EdgeInsets.only(bottom: 15, top: 15),
                   child: CustomInput(
                     hint: "Site",
+                    controller: _siteController,
                     onSaved: (site) {
                       _laboratorio.site = site;
                     },
@@ -815,7 +869,7 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
                   ),
                 ),
                 BotaoCustomizado(
-                  texto: "Cadastrar Laboratório",
+                  texto: "Salvar Laboratório",
                   onPressed: () {
                     if (_formKey.currentState.validate()) {
                       //salva campos

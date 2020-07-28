@@ -1,35 +1,21 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:infolab_app/models/Laboratorio.dart';
-import 'package:infolab_app/views/widgets/ItemLaboratorio.dart';
+import 'package:infolab_app/models/Cidade.dart';
+import 'package:infolab_app/views/widgets/ItemCidade.dart';
 
-class MeusLaboratorios extends StatefulWidget {
+class Cidades extends StatefulWidget {
   @override
-  _MeusLaboratoriosState createState() => _MeusLaboratoriosState();
+  _CidadesState createState() => _CidadesState();
 }
 
-class _MeusLaboratoriosState extends State<MeusLaboratorios> {
+class _CidadesState extends State<Cidades> {
   final _controller = StreamController<QuerySnapshot>.broadcast();
-  String _idUsuarioLogado;
 
-  _recuperaDadosUsuarioLogado() async {
-    FirebaseAuth auth = FirebaseAuth.instance;
-    FirebaseUser usuarioLogado = await auth.currentUser();
-    _idUsuarioLogado = usuarioLogado.uid;
-  }
-
-  Future<Stream<QuerySnapshot>> _adicionarListenerLaboratorios() async {
-    await _recuperaDadosUsuarioLogado();
-
+  Future<Stream<QuerySnapshot>> _adicionarListenerCidades() async {
     Firestore db = Firestore.instance;
-    Stream<QuerySnapshot> stream = db
-        .collection("meus_laboratorios")
-        .document(_idUsuarioLogado)
-        .collection("laboratorios")
-        .snapshots();
+    Stream<QuerySnapshot> stream = db.collection("cidades").snapshots();
     stream.listen((dados) {
       _controller.add(dados);
     });
@@ -38,7 +24,7 @@ class _MeusLaboratoriosState extends State<MeusLaboratorios> {
   @override
   void initState() {
     super.initState();
-    _adicionarListenerLaboratorios();
+    _adicionarListenerCidades();
   }
 
   @override
@@ -59,13 +45,13 @@ class _MeusLaboratoriosState extends State<MeusLaboratorios> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Meus Laboratórios'),
+        title: Text('Cidades'),
       ),
       floatingActionButton: FloatingActionButton(
         foregroundColor: Colors.white,
         child: Icon(Icons.add),
         onPressed: () {
-          Navigator.pushNamed(context, '/novo-laboratorio');
+          Navigator.pushNamed(context, '/nova-cidade');
         },
       ),
       body: StreamBuilder(
@@ -84,22 +70,20 @@ class _MeusLaboratoriosState extends State<MeusLaboratorios> {
               return ListView.builder(
                   itemCount: querySnapshot.documents.length,
                   itemBuilder: (_, indice) {
-                    List<DocumentSnapshot> laboratorios =
+                    List<DocumentSnapshot> cidades =
                         querySnapshot.documents.toList();
-                    DocumentSnapshot documentSnapshot = laboratorios[indice];
-                    Laboratorio laboratorio =
-                        Laboratorio.fromDocumentSnapshot(documentSnapshot);
-                    return GestureDetector(
-                      child: ItemLaboratorio(
-                        laboratorio: laboratorio,
-                        onPressedEdit: () {
-                          Navigator.pushNamed(context, "/novo-laboratorio",
-                              arguments: laboratorio);
-                        },
-                      ),
-                      onTap: () {
-                        Navigator.pushNamed(context, "/detalhes-laboratorio",
-                            arguments: laboratorio);
+                    DocumentSnapshot documentSnapshot = cidades[indice];
+                    Cidade cidade =
+                        Cidade.fromDocumentSnapshot(documentSnapshot);
+                    return ItemCidade(
+                      cidade: cidade,
+                      onTapItem: () {
+                        Navigator.pushNamed(context, "/nova-cidade",
+                            arguments: cidade);
+                      },
+                      onPressedEdit: () {
+                        Navigator.pushNamed(context, "/nova-cidade",
+                            arguments: cidade);
                       },
                     );
                   });

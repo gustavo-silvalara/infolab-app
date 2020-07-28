@@ -1,9 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:infolab_app/views/Cidades.dart';
 import 'package:infolab_app/views/DetalhesLaboratorio.dart';
+import 'package:infolab_app/views/Institutos.dart';
 import 'package:infolab_app/views/Laboratorios.dart';
 import 'package:infolab_app/views/Login.dart';
 import 'package:infolab_app/views/MeusLaboratorios.dart';
+import 'package:infolab_app/views/NovaCidade.dart';
+import 'package:infolab_app/views/NovoInstituto.dart';
 import 'package:infolab_app/views/NovoLaboratorio.dart';
 
 class RouteGenerator {
@@ -25,7 +29,23 @@ class RouteGenerator {
         );
       case '/novo-laboratorio':
         return MaterialPageRoute(
-          builder: (_) => NovoLaboratorio(),
+          builder: (_) => NovoLaboratorio(args),
+        );
+      case '/cidades':
+        return MaterialPageRoute(
+          builder: (_) => Cidades(),
+        );
+      case '/nova-cidade':
+        return MaterialPageRoute(
+          builder: (_) => NovaCidade(args),
+        );
+      case '/institutos':
+        return MaterialPageRoute(
+          builder: (_) => Institutos(),
+        );
+      case '/novo-instituto':
+        return MaterialPageRoute(
+          builder: (_) => NovoInstituto(args),
         );
       case "/detalhes-laboratorio":
         return MaterialPageRoute(builder: (_) => DetalhesLaboratorio(args));

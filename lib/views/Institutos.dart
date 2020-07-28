@@ -1,35 +1,21 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:infolab_app/models/Laboratorio.dart';
-import 'package:infolab_app/views/widgets/ItemLaboratorio.dart';
+import 'package:infolab_app/models/Instituto.dart';
+import 'package:infolab_app/views/widgets/ItemInstituto.dart';
 
-class MeusLaboratorios extends StatefulWidget {
+class Institutos extends StatefulWidget {
   @override
-  _MeusLaboratoriosState createState() => _MeusLaboratoriosState();
+  _InstitutosState createState() => _InstitutosState();
 }
 
-class _MeusLaboratoriosState extends State<MeusLaboratorios> {
+class _InstitutosState extends State<Institutos> {
   final _controller = StreamController<QuerySnapshot>.broadcast();
-  String _idUsuarioLogado;
 
-  _recuperaDadosUsuarioLogado() async {
-    FirebaseAuth auth = FirebaseAuth.instance;
-    FirebaseUser usuarioLogado = await auth.currentUser();
-    _idUsuarioLogado = usuarioLogado.uid;
-  }
-
-  Future<Stream<QuerySnapshot>> _adicionarListenerLaboratorios() async {
-    await _recuperaDadosUsuarioLogado();
-
+  Future<Stream<QuerySnapshot>> _adicionarListenerInstitutos() async {
     Firestore db = Firestore.instance;
-    Stream<QuerySnapshot> stream = db
-        .collection("meus_laboratorios")
-        .document(_idUsuarioLogado)
-        .collection("laboratorios")
-        .snapshots();
+    Stream<QuerySnapshot> stream = db.collection("institutos").snapshots();
     stream.listen((dados) {
       _controller.add(dados);
     });
@@ -38,7 +24,7 @@ class _MeusLaboratoriosState extends State<MeusLaboratorios> {
   @override
   void initState() {
     super.initState();
-    _adicionarListenerLaboratorios();
+    _adicionarListenerInstitutos();
   }
 
   @override
@@ -59,13 +45,13 @@ class _MeusLaboratoriosState extends State<MeusLaboratorios> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Meus Laboratórios'),
+        title: Text('Institutos'),
       ),
       floatingActionButton: FloatingActionButton(
         foregroundColor: Colors.white,
         child: Icon(Icons.add),
         onPressed: () {
-          Navigator.pushNamed(context, '/novo-laboratorio');
+          Navigator.pushNamed(context, '/novo-instituto');
         },
       ),
       body: StreamBuilder(
@@ -84,22 +70,20 @@ class _MeusLaboratoriosState extends State<MeusLaboratorios> {
               return ListView.builder(
                   itemCount: querySnapshot.documents.length,
                   itemBuilder: (_, indice) {
-                    List<DocumentSnapshot> laboratorios =
+                    List<DocumentSnapshot> institutos =
                         querySnapshot.documents.toList();
-                    DocumentSnapshot documentSnapshot = laboratorios[indice];
-                    Laboratorio laboratorio =
-                        Laboratorio.fromDocumentSnapshot(documentSnapshot);
-                    return GestureDetector(
-                      child: ItemLaboratorio(
-                        laboratorio: laboratorio,
-                        onPressedEdit: () {
-                          Navigator.pushNamed(context, "/novo-laboratorio",
-                              arguments: laboratorio);
-                        },
-                      ),
-                      onTap: () {
-                        Navigator.pushNamed(context, "/detalhes-laboratorio",
-                            arguments: laboratorio);
+                    DocumentSnapshot documentSnapshot = institutos[indice];
+                    Instituto instituto =
+                        Instituto.fromDocumentSnapshot(documentSnapshot);
+                    return ItemInstituto(
+                      instituto: instituto,
+                      onTapItem: () {
+                        Navigator.pushNamed(context, "/novo-instituto",
+                            arguments: instituto);
+                      },
+                      onPressedEdit: () {
+                        Navigator.pushNamed(context, "/novo-instituto",
+                            arguments: instituto);
                       },
                     );
                   });
