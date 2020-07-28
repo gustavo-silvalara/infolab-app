@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:infolab_app/models/Campus.dart';
+import 'package:infolab_app/models/Area.dart';
 
-class ItemCampus extends StatelessWidget {
-  Campus campus;
+class ItemArea extends StatelessWidget {
+  Area area;
   VoidCallback onTapItem;
   VoidCallback onPressedEdit;
 
-  ItemCampus({
-    @required this.campus,
+  ItemArea({
+    @required this.area,
     this.onTapItem,
     this.onPressedEdit,
   });
@@ -29,20 +29,16 @@ class ItemCampus extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        campus.nome,
+                        area.nome,
                         style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
+                          fontSize: 18,
+                        ),
                       ),
                       Text(
-                        campus.estado,
+                        area.grandeArea,
                         style: TextStyle(
                             fontSize: 15, fontWeight: FontWeight.bold),
                       ),
-                      if (campus.cidade != null)
-                        Text(
-                          campus.cidade,
-                          style: TextStyle(fontSize: 15),
-                        ),
                     ],
                   ),
                 ),
