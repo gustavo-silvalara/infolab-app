@@ -28,22 +28,14 @@ class _LoginState extends State<Login> {
     return usuario;
   }
 
-  _cadastrarUsuario(Usuario usuario) {
-    FirebaseAuth auth = FirebaseAuth.instance;
-    auth
-        .createUserWithEmailAndPassword(
-            email: usuario.email, password: usuario.senha)
-        .then((firebaseUser) {
-      Navigator.pushReplacementNamed(context, '/');
-    });
-  }
-
-  _logarUsuario(Usuario usuario) {
-    FirebaseAuth auth = FirebaseAuth.instance;
+  _logarUsuario(Usuario usuario) async {
+    _abrirDialog(_dialogContext);
+    FirebaseAuth auth = await FirebaseAuth.instance;
     auth
         .signInWithEmailAndPassword(
             email: usuario.email, password: usuario.senha)
         .then((firebaseUser) {
+      Navigator.pop(_dialogContext);
       Navigator.pushReplacementNamed(context, '/');
     });
   }
@@ -55,11 +47,7 @@ class _LoginState extends State<Login> {
     if (email.isNotEmpty && email.contains('@')) {
       if (senha.isNotEmpty && senha.length > 6) {
         Usuario usuario = _configurarUsuario(email, senha);
-        if (_cadastrar) {
-          _cadastrarUsuario(usuario);
-        } else {
-          _logarUsuario(usuario);
-        }
+        _logarUsuario(usuario);
       } else {
         setState(() {
           _mensagemErro = 'A senha precisa ter 8 ou mais caracteres!';
@@ -70,6 +58,28 @@ class _LoginState extends State<Login> {
         _mensagemErro = 'Preencha o e-mail corretamente';
       });
     }
+  }
+
+  BuildContext _dialogContext;
+
+  _abrirDialog(BuildContext context) {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                CircularProgressIndicator(),
+                SizedBox(
+                  height: 20,
+                ),
+                Text("Entrando...")
+              ],
+            ),
+          );
+        });
   }
 
   @override
@@ -105,21 +115,8 @@ class _LoginState extends State<Login> {
                   hint: 'Senha',
                   obscure: true,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text('Logar'),
-                    Switch(
-                      value: _cadastrar,
-                      onChanged: (bool valor) {
-                        setState(() {
-                          _cadastrar = valor;
-                          _textoBotao = (_cadastrar) ? 'Cadastrar' : 'Entrar';
-                        });
-                      },
-                    ),
-                    Text('Cadastrar'),
-                  ],
+                SizedBox(
+                  height: 30.0,
                 ),
                 RaisedButton(
                   child: Text(
@@ -129,6 +126,7 @@ class _LoginState extends State<Login> {
                   color: Color(0xff359830),
                   padding: EdgeInsets.fromLTRB(32, 16, 32, 16),
                   onPressed: () {
+                    _dialogContext = context;
                     _validarCampos();
                   },
                 ),

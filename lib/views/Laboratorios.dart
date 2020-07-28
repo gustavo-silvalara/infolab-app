@@ -34,8 +34,8 @@ class _LaboratoriosState extends State<Laboratorios> {
       case 'Meus Laboratórios':
         Navigator.pushNamed(context, '/meus-laboratorios');
         break;
-      case 'Usuários':
-        Navigator.pushNamed(context, '/usuarios');
+      case 'Novo Usuário':
+        Navigator.pushNamed(context, '/novo-usuario');
         break;
       case 'Áreas':
         Navigator.pushNamed(context, '/areas');
@@ -71,11 +71,11 @@ class _LaboratoriosState extends State<Laboratorios> {
         ? ['Entrar/Cadastrar']
         : [
             'Meus Laboratórios',
-            'Usuários',
             'Áreas',
             'Cidades',
             'Institutos',
             'Campus',
+            'Novo Usuário',
             'Sair'
           ];
   }

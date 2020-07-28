@@ -13,6 +13,7 @@ import 'package:infolab_app/views/NovaCidade.dart';
 import 'package:infolab_app/views/NovoCampus.dart';
 import 'package:infolab_app/views/NovoInstituto.dart';
 import 'package:infolab_app/views/NovoLaboratorio.dart';
+import 'package:infolab_app/views/NovoUsuario.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -30,6 +31,10 @@ class RouteGenerator {
       case '/meus-laboratorios':
         return MaterialPageRoute(
           builder: (_) => MeusLaboratorios(),
+        );
+      case '/novo-usuario':
+        return MaterialPageRoute(
+          builder: (_) => NovoUsuario(),
         );
       case '/novo-laboratorio':
         return MaterialPageRoute(
