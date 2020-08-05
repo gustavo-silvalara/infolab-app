@@ -102,10 +102,15 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
     _abrirDialog(_dialogContext);
 
     //Upload imagens no Storage
-    print(widget.laboratorio.fotos.length);
-    print(_listaImagens.length);
-    if (widget.laboratorio.fotos.length < _listaImagens.length)
+    if (widget.laboratorio != null &&
+        (widget.laboratorio.fotos != null &&
+            widget.laboratorio.fotos.isNotEmpty)) {
+      if (widget.laboratorio.fotos.length < _listaImagens.length) {
+        await _uploadImagens();
+      }
+    } else {
       await _uploadImagens();
+    }
 
     //Salvar lab no Firestore
     FirebaseAuth auth = FirebaseAuth.instance;
@@ -202,7 +207,22 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
     var i = 1;
 
     for (var imagem in _listaImagens) {
-      if (i > _laboratorio.fotos.length) {
+      if (_laboratorio.fotos != null && _laboratorio.fotos.isNotEmpty) {
+        if (i > _laboratorio.fotos.length) {
+          String nomeImagem = DateTime.now().millisecondsSinceEpoch.toString();
+          StorageReference arquivo = pastaRaiz
+              .child("meus_laboratorios")
+              .child(_laboratorio.id)
+              .child(nomeImagem);
+
+          StorageUploadTask uploadTask = arquivo.putFile(imagem);
+          StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
+
+          String url = await taskSnapshot.ref.getDownloadURL();
+          _laboratorio.fotos.add(url);
+        }
+        i++;
+      } else {
         String nomeImagem = DateTime.now().millisecondsSinceEpoch.toString();
         StorageReference arquivo = pastaRaiz
             .child("meus_laboratorios")
@@ -215,7 +235,6 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
         String url = await taskSnapshot.ref.getDownloadURL();
         _laboratorio.fotos.add(url);
       }
-      i++;
     }
   }
 

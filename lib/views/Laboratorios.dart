@@ -114,7 +114,7 @@ class _LaboratoriosState extends State<Laboratorios> {
                     'Campus',
                     'Sair'
                   ]
-                : perfilAtual == "Resp. Instituto"
+                : perfilAtual == "Resp. Institucional"
                     ? ['Meus Laboratórios', 'Cidades', 'Campus', 'Sair']
                     : ['Meus Laboratórios', 'Sair'];
   }
