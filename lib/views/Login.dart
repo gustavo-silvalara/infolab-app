@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:infolab_app/models/Usuario.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:infolab_app/util/Configuracoes.dart';
 import 'package:infolab_app/views/widgets/CustomInput.dart';
+import 'package:localstorage/localstorage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -31,10 +34,18 @@ class _LoginState extends State<Login> {
   _logarUsuario(Usuario usuario) async {
     _abrirDialog(_dialogContext);
     FirebaseAuth auth = await FirebaseAuth.instance;
+    usuario.email = usuario.email.trim();
+    usuario.senha = usuario.senha.trim();
     auth
         .signInWithEmailAndPassword(
             email: usuario.email, password: usuario.senha)
-        .then((firebaseUser) {
+        .then((firebaseUser) async {
+      LocalStorage storage = new LocalStorage('infolab');
+      storage.setItem("email", usuario.email);
+
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setString("email", usuario.email);
+
       Navigator.pop(_dialogContext);
       Navigator.pushReplacementNamed(context, '/');
     });

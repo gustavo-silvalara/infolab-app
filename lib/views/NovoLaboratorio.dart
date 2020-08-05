@@ -15,6 +15,7 @@ import 'package:infolab_app/util/Configuracoes.dart';
 import 'package:infolab_app/views/widgets/BotaoCustomizado.dart';
 import 'package:infolab_app/views/widgets/CustomInput.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:validadores/Validador.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:http/http.dart' as http;
@@ -101,7 +102,10 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
     _abrirDialog(_dialogContext);
 
     //Upload imagens no Storage
-    if (widget.laboratorio == null) await _uploadImagens();
+    print(widget.laboratorio.fotos.length);
+    print(_listaImagens.length);
+    if (widget.laboratorio.fotos.length < _listaImagens.length)
+      await _uploadImagens();
 
     //Salvar lab no Firestore
     FirebaseAuth auth = FirebaseAuth.instance;
@@ -195,18 +199,23 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
     FirebaseStorage storage = FirebaseStorage.instance;
     StorageReference pastaRaiz = storage.ref();
 
+    var i = 1;
+
     for (var imagem in _listaImagens) {
-      String nomeImagem = DateTime.now().millisecondsSinceEpoch.toString();
-      StorageReference arquivo = pastaRaiz
-          .child("meus_laboratorios")
-          .child(_laboratorio.id)
-          .child(nomeImagem);
+      if (i > _laboratorio.fotos.length) {
+        String nomeImagem = DateTime.now().millisecondsSinceEpoch.toString();
+        StorageReference arquivo = pastaRaiz
+            .child("meus_laboratorios")
+            .child(_laboratorio.id)
+            .child(nomeImagem);
 
-      StorageUploadTask uploadTask = arquivo.putFile(imagem);
-      StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
+        StorageUploadTask uploadTask = arquivo.putFile(imagem);
+        StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
 
-      String url = await taskSnapshot.ref.getDownloadURL();
-      _laboratorio.fotos.add(url);
+        String url = await taskSnapshot.ref.getDownloadURL();
+        _laboratorio.fotos.add(url);
+      }
+      i++;
     }
   }
 
@@ -214,6 +223,7 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
   void initState() {
     super.initState();
     _carregarItensDropdown();
+    perfil();
     this.grandesAreas = {
       'exatas': "Ciências Exatas e da Terra",
       'biologicas': "Ciências Biológicas",
@@ -265,6 +275,21 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
         });
       });
     }
+  }
+
+  var perfilAtual = null;
+
+  perfil() async {
+    Firestore db = Firestore.instance;
+    final prefs = await SharedPreferences.getInstance();
+    var email = prefs.getString("email");
+    print(email);
+    var docs = await db.collection("usuarios").getDocuments();
+    docs.documents.forEach((element) {
+      if (element["email"] == email) {
+        perfilAtual = element["perfil"];
+      }
+    });
   }
 
   _carregarItensDropdown() {
@@ -432,6 +457,14 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
                                                             _listaImagens
                                                                 .removeAt(
                                                                     indice);
+                                                            if (indice <=
+                                                                _laboratorio
+                                                                    .fotos
+                                                                    .length) {
+                                                              _laboratorio.fotos
+                                                                  .removeAt(
+                                                                      indice);
+                                                            }
                                                             Navigator.of(
                                                                     context)
                                                                 .pop();

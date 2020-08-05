@@ -1,7 +1,10 @@
 import 'package:brasil_fields/brasil_fields.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class Configuracoes {
+  static String EMAIL_LOGADO = "";
+
   static List<DropdownMenuItem<String>> getEstados() {
     List<DropdownMenuItem<String>> listaItensDropEstados = [];
 
@@ -82,5 +85,40 @@ class Configuracoes {
     ));
 
     return itensDropCategorias;
+  }
+
+  static List<DropdownMenuItem<String>> getPerfis() {
+    List<DropdownMenuItem<String>> itensDropPerfis = [];
+
+    //Categorias
+    itensDropPerfis.add(DropdownMenuItem(
+      child: Text(
+        "Perfis",
+        style: TextStyle(color: Color(0xff359830)),
+      ),
+      value: null,
+    ));
+
+    itensDropPerfis.add(DropdownMenuItem(
+      child: Text("ADM TI"),
+      value: "ADM TI",
+    ));
+
+    itensDropPerfis.add(DropdownMenuItem(
+      child: Text("ADM Sistema"),
+      value: "ADM Sistema",
+    ));
+
+    itensDropPerfis.add(DropdownMenuItem(
+      child: Text("Resp. Institucional"),
+      value: "Resp. Institucional",
+    ));
+
+    itensDropPerfis.add(DropdownMenuItem(
+      child: Text("Resp. Laboratório"),
+      value: "Resp. Laboratório",
+    ));
+
+    return itensDropPerfis;
   }
 }

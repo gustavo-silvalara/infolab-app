@@ -1,17 +1,26 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Usuario {
   String _idUsuario;
-  String _nome;
   String _email;
   String _senha;
+  String _perfil;
 
   Usuario();
 
   Map<String, dynamic> toMap() {
     Map<String, dynamic> map = {
       'idUsuario': this.idUsuario,
-      'nome': this.nome,
       'email': this.email,
+      'perfil': this.perfil,
     };
+    return map;
+  }
+
+  Usuario.fromDocumentSnapshot(DocumentSnapshot documentSnapshot) {
+    this.idUsuario = documentSnapshot.documentID;
+    this.email = documentSnapshot["email"];
+    this.perfil = documentSnapshot["perfil"];
   }
 
   String get senha => _senha;
@@ -26,10 +35,10 @@ class Usuario {
     _email = value;
   }
 
-  String get nome => _nome;
+  String get perfil => _perfil;
 
-  set nome(String value) {
-    _nome = value;
+  set perfil(String value) {
+    _perfil = value;
   }
 
   String get idUsuario => _idUsuario;

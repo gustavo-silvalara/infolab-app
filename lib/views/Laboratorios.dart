@@ -9,6 +9,8 @@ import 'package:infolab_app/models/Laboratorio.dart';
 import 'package:infolab_app/util/Configuracoes.dart';
 import 'package:infolab_app/views/widgets/InputPesquisa.dart';
 import 'package:infolab_app/views/widgets/ItemLaboratorio.dart';
+import 'package:localstorage/localstorage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Laboratorios extends StatefulWidget {
   @override
@@ -34,8 +36,8 @@ class _LaboratoriosState extends State<Laboratorios> {
       case 'Meus Laboratórios':
         Navigator.pushNamed(context, '/meus-laboratorios');
         break;
-      case 'Novo Usuário':
-        Navigator.pushNamed(context, '/novo-usuario');
+      case 'Usuários':
+        Navigator.pushNamed(context, '/usuarios');
         break;
       case 'Áreas':
         Navigator.pushNamed(context, '/areas');
@@ -61,23 +63,60 @@ class _LaboratoriosState extends State<Laboratorios> {
   _deslogarUsuario() async {
     FirebaseAuth auth = FirebaseAuth.instance;
     await auth.signOut();
+    LocalStorage storage = new LocalStorage("infolab");
+    final prefs = await SharedPreferences.getInstance();
+    prefs.remove("email");
+
     Navigator.popAndPushNamed(context, '/login');
   }
 
   Future _verificarUsuarioLogado() async {
     FirebaseAuth auth = FirebaseAuth.instance;
     FirebaseUser usuarioLogado = await auth.currentUser();
+    var perfilAtual = null;
+    Firestore db = Firestore.instance;
+
+    LocalStorage storage = new LocalStorage('infolab');
+    // var email = await storage.getItem("email");
+
+    final prefs = await SharedPreferences.getInstance();
+    var email = prefs.getString("email");
+    print(email);
+    if (usuarioLogado != null) {
+      var docs = await db.collection("usuarios").getDocuments();
+      docs.documents.forEach((element) {
+        if (element["email"] == email) {
+          perfilAtual = element["perfil"];
+        }
+      });
+    }
+
+    print(perfilAtual);
+
     itensMenu = usuarioLogado == null
         ? ['Entrar/Cadastrar']
-        : [
-            'Meus Laboratórios',
-            'Áreas',
-            'Cidades',
-            'Institutos',
-            'Campus',
-            'Novo Usuário',
-            'Sair'
-          ];
+        : perfilAtual == "ADM TI"
+            ? [
+                'Meus Laboratórios',
+                'Áreas',
+                'Cidades',
+                'Institutos',
+                'Campus',
+                'Usuários',
+                'Sair'
+              ]
+            : perfilAtual == "ADM Sistema"
+                ? [
+                    'Meus Laboratórios',
+                    'Áreas',
+                    'Cidades',
+                    'Institutos',
+                    'Campus',
+                    'Sair'
+                  ]
+                : perfilAtual == "Resp. Instituto"
+                    ? ['Meus Laboratórios', 'Cidades', 'Campus', 'Sair']
+                    : ['Meus Laboratórios', 'Sair'];
   }
 
   _carregarItensDropdown() {
