@@ -56,12 +56,12 @@ class _LoginState extends State<Login> {
     String senha = _controllerSenha.text;
 
     if (email.isNotEmpty && email.contains('@')) {
-      if (senha.isNotEmpty && senha.length > 6) {
+      if (senha.isNotEmpty) {
         Usuario usuario = _configurarUsuario(email, senha);
         _logarUsuario(usuario);
       } else {
         setState(() {
-          _mensagemErro = 'A senha precisa ter 8 ou mais caracteres!';
+          _mensagemErro = 'A senha não está preenchida!';
         });
       }
     } else {

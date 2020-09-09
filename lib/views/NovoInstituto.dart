@@ -81,8 +81,9 @@ class _NovoInstitutoState extends State<NovoInstituto> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-            widget.instituto != null ? "Editar Instituto" : "Nova Instituto"),
+        title: Text(widget.instituto != null
+            ? "Editar Instituição"
+            : "Nova Instituição"),
       ),
       body: SingleChildScrollView(
         child: Container(

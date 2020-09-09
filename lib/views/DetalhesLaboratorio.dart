@@ -123,7 +123,7 @@ class _DetalhesLaboratorioState extends State<DetalhesLaboratorio> {
                       child: Divider(),
                     ),
                     Text(
-                      "Responsável",
+                      "Contato",
                       style:
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),

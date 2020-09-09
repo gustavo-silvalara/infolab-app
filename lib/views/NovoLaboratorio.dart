@@ -529,7 +529,7 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
                   padding: EdgeInsets.only(bottom: 15, top: 15),
                   child: CustomInput(
                     controller: _nomeController,
-                    hint: "Nome*",
+                    hint: "Nome do Laboratório*",
                     onSaved: (nome) {
                       _laboratorio.nome = nome;
                     },
@@ -600,7 +600,7 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
                     validator: (valor) {
                       return Validador()
                           .add(Validar.OBRIGATORIO, msg: "Campo obrigatório")
-                          .maxLength(200, msg: "Máximo de 200 caracteres")
+                          .maxLength(1000, msg: "Máximo de 1000 caracteres")
                           .valido(valor);
                     },
                   ),
@@ -717,7 +717,7 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
                       decoration: InputDecoration(
                           contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
                           border: OutlineInputBorder(),
-                          hintText: "Instituto*"),
+                          hintText: "Instituição*"),
                     ),
                     suggestionsCallback: (pattern) async {
                       return await getSuggestionInstituto(pattern);

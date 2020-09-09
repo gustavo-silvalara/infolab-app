@@ -45,7 +45,7 @@ class _LaboratoriosState extends State<Laboratorios> {
       case 'Cidades':
         Navigator.pushNamed(context, '/cidades');
         break;
-      case 'Institutos':
+      case 'Instituições':
         Navigator.pushNamed(context, '/institutos');
         break;
       case 'Campus':
@@ -100,7 +100,7 @@ class _LaboratoriosState extends State<Laboratorios> {
                 'Meus Laboratórios',
                 'Áreas',
                 'Cidades',
-                'Institutos',
+                'Instituições',
                 'Campus',
                 'Usuários',
                 'Sair'
@@ -110,7 +110,7 @@ class _LaboratoriosState extends State<Laboratorios> {
                     'Meus Laboratórios',
                     'Áreas',
                     'Cidades',
-                    'Institutos',
+                    'Instituições',
                     'Campus',
                     'Sair'
                   ]
@@ -289,8 +289,8 @@ class _LaboratoriosState extends State<Laboratorios> {
                         Laboratorio laboratorio =
                             Laboratorio.fromDocumentSnapshot(element);
                         if (laboratorio.filtro != null &&
-                            laboratorio.filtro
-                                .contains(_controllerPesquisa.text)) {
+                            laboratorio.filtro.toLowerCase().contains(
+                                _controllerPesquisa.text.toLowerCase())) {
                           documentos.add(element);
                         }
                       });

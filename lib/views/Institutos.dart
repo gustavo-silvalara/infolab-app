@@ -45,7 +45,7 @@ class _InstitutosState extends State<Institutos> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Institutos'),
+        title: Text('Instituições'),
       ),
       floatingActionButton: FloatingActionButton(
         foregroundColor: Colors.white,
