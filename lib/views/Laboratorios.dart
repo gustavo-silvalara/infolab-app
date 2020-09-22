@@ -307,6 +307,17 @@ class _LaboratoriosState extends State<Laboratorios> {
                         ),
                       );
                     }
+                    if (documentos.length == 0) {
+                      return Container(
+                        height: 350,
+                        child: Center(
+                          child: Text(
+                            'Não localizado!',
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      );
+                    }
                     return Expanded(
                       child: ListView.builder(
                           itemCount: documentos.length,

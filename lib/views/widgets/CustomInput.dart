@@ -11,6 +11,7 @@ class CustomInput extends StatelessWidget {
   final List<TextInputFormatter> inputFormatters;
   final Function(String) validator;
   final Function(String) onSaved;
+  final Function(String) onSubmitted;
 
   CustomInput(
       {@required this.controller,
@@ -21,7 +22,8 @@ class CustomInput extends StatelessWidget {
       this.inputFormatters,
       this.maxLines = 1,
       this.validator,
-      this.onSaved});
+      this.onSaved,
+      this.onSubmitted});
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +35,7 @@ class CustomInput extends StatelessWidget {
       inputFormatters: this.inputFormatters,
       validator: this.validator,
       maxLines: this.maxLines,
+      onFieldSubmitted: this.onSubmitted,
       onSaved: this.onSaved,
       style: TextStyle(fontSize: 20),
       decoration: InputDecoration(

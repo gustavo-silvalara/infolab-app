@@ -46,6 +46,10 @@ class ItemLaboratorio extends StatelessWidget {
                         style: TextStyle(fontSize: 15),
                       ),
                       Text(
+                        laboratorio.instituto,
+                        style: TextStyle(fontSize: 13),
+                      ),
+                      Text(
                         'Campus ' + laboratorio.campus,
                         style: TextStyle(fontSize: 13),
                       ),

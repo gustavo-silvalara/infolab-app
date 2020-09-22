@@ -119,6 +119,14 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
 
     Firestore db = Firestore.instance;
 
+    _laboratorio.equipamentos = '';
+    equipamentoList.forEach((e) {
+      _laboratorio.equipamentos += e;
+      if (equipamentoList.last != e) {
+        _laboratorio.equipamentos += ', ';
+      }
+    });
+
     _laboratorio.filtro = _laboratorio.nome +
         ' ' +
         _laboratorio.responsavel +
@@ -265,8 +273,6 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
       _responsavelController =
           new TextEditingController(text: _laboratorio.responsavel);
       _emailController = new TextEditingController(text: _laboratorio.email);
-      _equipamentosController =
-          new TextEditingController(text: _laboratorio.equipamentos);
       _atividadesController =
           new TextEditingController(text: _laboratorio.atividades);
       _siteController = new TextEditingController(
@@ -293,6 +299,14 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
           this._listaImagens.add(file);
         });
       });
+      equipamentoList = _laboratorio.equipamentos.split(',');
+      if (equipamentoList.length > 0) {
+        equipamentoList.forEach((e) {
+          if (e.startsWith(' ')) {
+            e = e.substring(1, e.length);
+          }
+        });
+      }
     }
   }
 
@@ -387,6 +401,14 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
   TextEditingController _typeAheadAreaController = TextEditingController();
 
   final focus = FocusNode();
+
+  List<String> equipamentoList = [];
+
+  deletarEquipamento(int index) {
+    setState(() {
+      equipamentoList.removeAt(index);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -544,7 +566,7 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
                   padding: EdgeInsets.only(bottom: 15, top: 15),
                   child: CustomInput(
                     controller: _responsavelController,
-                    hint: "Responsável*",
+                    hint: "Contato*",
                     onSaved: (responsavel) {
                       _laboratorio.responsavel = responsavel;
                     },
@@ -590,18 +612,50 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
                 ),
                 Padding(
                   padding: EdgeInsets.only(bottom: 15),
+                  child: Text(
+                    'Equipamentos:',
+                    style: TextStyle(fontSize: 20),
+                  ),
+                ),
+                ListView.builder(
+                  primary: false,
+                  shrinkWrap: true,
+                  itemCount: equipamentoList.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      title: Row(
+                        children: [
+                          Expanded(
+                            child: Text(equipamentoList[index]),
+                          ),
+                          FlatButton(
+                            child: Icon(Icons.delete),
+                            onPressed: () {
+                              this.deletarEquipamento(index);
+                            },
+                          )
+                        ],
+                      ),
+                    );
+                  },
+                ),
+                Padding(
+                  padding: EdgeInsets.only(bottom: 15),
                   child: CustomInput(
                     controller: _equipamentosController,
-                    hint: "Equipamentos*",
-                    onSaved: (equipamentos) {
-                      _laboratorio.equipamentos = equipamentos;
+                    hint: "Adicionar equipamento*",
+                    onSubmitted: (equipamento) {
+                      setState(() {
+                        equipamentoList.add(equipamento);
+                        _equipamentosController.text = '';
+                      });
                     },
-                    maxLines: 3,
+                    onSaved: (equipamento) {
+                      // _laboratorio.equipamentos = equipamento;
+                    },
+                    maxLines: 1,
                     validator: (valor) {
-                      return Validador()
-                          .add(Validar.OBRIGATORIO, msg: "Campo obrigatório")
-                          .maxLength(1000, msg: "Máximo de 1000 caracteres")
-                          .valido(valor);
+                      return null;
                     },
                   ),
                 ),
