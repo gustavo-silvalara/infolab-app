@@ -58,6 +58,39 @@ class _NovoInstitutoState extends State<NovoInstituto> {
     });
   }
 
+  _showDialogConfirma() async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // retorna um objeto do tipo Dialog
+        return AlertDialog(
+          title: new Text("Remover Instituição?"),
+          actions: <Widget>[
+            new FlatButton(
+              child: new Text("Não"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            new FlatButton(
+              child: new Text("Sim"),
+              onPressed: () async {
+                await deletar();
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  deletar() async {
+    Firestore db = Firestore.instance;
+    db.collection("institutos").document(_instituto.id).delete();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -84,6 +117,11 @@ class _NovoInstitutoState extends State<NovoInstituto> {
         title: Text(widget.instituto != null
             ? "Editar Instituição"
             : "Nova Instituição"),
+        actions: [
+          if (widget.instituto?.id != null)
+            FlatButton(
+                onPressed: _showDialogConfirma, child: Icon(Icons.delete))
+        ],
       ),
       body: SingleChildScrollView(
         child: Container(

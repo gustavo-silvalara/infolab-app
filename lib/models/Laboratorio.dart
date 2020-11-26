@@ -18,6 +18,7 @@ class Laboratorio {
   String _grandeArea;
   String _area;
   String _instituto;
+  String _pdf;
 
   Laboratorio();
 
@@ -39,6 +40,7 @@ class Laboratorio {
     this.grandeArea = documentSnapshot["grandeArea"];
     this.area = documentSnapshot["area"];
     this.instituto = documentSnapshot["instituto"];
+    this.pdf = documentSnapshot["pdf"];
   }
 
   Laboratorio.gerarId() {
@@ -67,6 +69,7 @@ class Laboratorio {
       "grandeArea": this.grandeArea,
       "area": this.area,
       "instituto": this.instituto,
+      "pdf": this.pdf,
     };
 
     return map;
@@ -172,5 +175,11 @@ class Laboratorio {
 
   set instituto(String value) {
     _instituto = value;
+  }
+
+  String get pdf => _pdf;
+
+  set pdf(String value) {
+    _pdf = value;
   }
 }

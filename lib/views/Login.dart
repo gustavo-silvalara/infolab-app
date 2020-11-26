@@ -106,12 +106,24 @@ class _LoginState extends State<Login> {
               children: <Widget>[
                 Padding(
                   padding: EdgeInsets.only(bottom: 32),
-                  child: Image.asset(
+                  child: Center(
+                    child:Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                       Image.asset(
                     "imagens/if.png",
                     width: 124,
                     height: 124,
                   ),
+                       Image.asset(
+                    "imagens/fortec.png",
+                    width: 124,
+                    height: 124,
+                  ),
+                    ]
+                  ),
                 ),
+                  ),
                 CustomInput(
                   controller: _controllerEmail,
                   hint: 'E-mail',

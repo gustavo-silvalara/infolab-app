@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:infolab_app/main.dart';
 import 'package:infolab_app/models/Laboratorio.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class DetalhesLaboratorio extends StatefulWidget {
@@ -16,6 +20,8 @@ class DetalhesLaboratorio extends StatefulWidget {
 class _DetalhesLaboratorioState extends State<DetalhesLaboratorio> {
   Laboratorio _laboratorio;
 
+  File pdf;
+
   List<Widget> _getListaImagens() {
     List<String> listaUrlImagens = _laboratorio.fotos;
     return listaUrlImagens.map((url) {
@@ -26,6 +32,10 @@ class _DetalhesLaboratorioState extends State<DetalhesLaboratorio> {
                 image: NetworkImage(url), fit: BoxFit.fitWidth)),
       );
     }).toList();
+  }
+
+  baixaArquivo() async {
+    _abrirSite(_laboratorio.pdf);
   }
 
   _enviarEmail(String email) async {
@@ -44,11 +54,15 @@ class _DetalhesLaboratorioState extends State<DetalhesLaboratorio> {
     }
   }
 
+  List<String> equipamentosList = [];
+
   @override
   void initState() {
     super.initState();
-
     _laboratorio = widget.laboratorio;
+    equipamentosList = _laboratorio.equipamentos.contains("; ")
+        ? _laboratorio.equipamentos.split('; ')
+        : _laboratorio.equipamentos.split(', ');
   }
 
   @override
@@ -110,13 +124,18 @@ class _DetalhesLaboratorioState extends State<DetalhesLaboratorio> {
                       child: Divider(),
                     ),
                     Text(
-                      "Equipamentos",
+                      "Principais Equipamentos",
                       style:
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
-                    Text(
-                      "${_laboratorio.equipamentos}",
-                      style: TextStyle(fontSize: 18),
+                    ListView.builder(
+                      primary: false,
+                      shrinkWrap: true,
+                      itemCount: equipamentosList.length,
+                      itemBuilder: (_, index) {
+                        return Text('- ' + equipamentosList[index],
+                            style: TextStyle(fontSize: 15));
+                      },
                     ),
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: 16),
@@ -178,6 +197,19 @@ class _DetalhesLaboratorioState extends State<DetalhesLaboratorio> {
                         style: TextStyle(fontSize: 18),
                       ),
                     ),
+                    if (_laboratorio.pdf != ".")
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 70),
+                        child: GestureDetector(
+                            child: Text(
+                              "Normas de Utilização",
+                              style: TextStyle(
+                                  fontSize: 18, color: Colors.lightBlue),
+                            ),
+                            onTap: () {
+                              baixaArquivo();
+                            }),
+                      ),
                     Padding(
                       padding: EdgeInsets.only(bottom: 70),
                       child: GestureDetector(

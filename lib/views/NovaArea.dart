@@ -96,6 +96,39 @@ class _NovaAreaState extends State<NovaArea> {
     _listaItensDropAreas = Configuracoes.getEstados();
   }
 
+  _showDialogConfirma() async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // retorna um objeto do tipo Dialog
+        return AlertDialog(
+          title: new Text("Remover Área?"),
+          actions: <Widget>[
+            new FlatButton(
+              child: new Text("Não"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            new FlatButton(
+              child: new Text("Sim"),
+              onPressed: () async {
+                await deletar();
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  deletar() async {
+    Firestore db = Firestore.instance;
+    db.collection("areas").document(_area.id).delete();
+  }
+
   TextEditingController _nomeController = TextEditingController();
 
   @override
@@ -103,6 +136,11 @@ class _NovaAreaState extends State<NovaArea> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.area != null ? "Editar Área" : "Nova Área"),
+        actions: [
+          if (widget.area?.id != null)
+            FlatButton(
+                onPressed: _showDialogConfirma, child: Icon(Icons.delete))
+        ],
       ),
       body: SingleChildScrollView(
         child: Container(

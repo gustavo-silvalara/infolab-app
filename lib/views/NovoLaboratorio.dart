@@ -19,6 +19,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:validadores/Validador.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_document_picker/flutter_document_picker.dart';
 
 class NovoLaboratorio extends StatefulWidget {
   Laboratorio laboratorio;
@@ -30,6 +31,7 @@ class NovoLaboratorio extends StatefulWidget {
 
 class _NovoLaboratorioState extends State<NovoLaboratorio> {
   List<File> _listaImagens = List();
+  File pdf;
   List<DropdownMenuItem<String>> _listaItensDropEstados = List();
   List<DropdownMenuItem<String>> _listaItensDropCategorias = List();
   final _formKey = GlobalKey<FormState>();
@@ -38,6 +40,7 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
 
   String _itemSelecionadoEstado;
   String _itemSelecionadoCategoria;
+  bool existePdf;
 
   Map<String, String> grandesAreas = new Map();
 
@@ -98,6 +101,43 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
         });
   }
 
+  String pdfNome = "";
+
+  _uploadPdf() async {
+    FlutterDocumentPickerParams params = FlutterDocumentPickerParams();
+
+    final path = await FlutterDocumentPicker.openDocument(params: params);
+
+    print(path);
+    if (path != null) {
+      existePdf = true;
+      pdf = File(path);
+      setState(() {
+        pdfNome = path.substring(path.lastIndexOf("/") + 1, path.length);
+      });
+      FirebaseStorage storage = FirebaseStorage.instance;
+      StorageReference pastaRaiz = storage.ref();
+      String nomeImagem = pdfNome;
+      StorageReference arquivo = pastaRaiz
+          .child("meus_laboratorios")
+          .child(_laboratorio.id)
+          .child(nomeImagem);
+
+      StorageUploadTask uploadTask = arquivo.putFile(pdf);
+      StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
+
+      String url = await taskSnapshot.ref.getDownloadURL();
+      _laboratorio.pdf = (url);
+    } else {
+      existePdf = false;
+      setState(() {
+        pdfNome = "";
+      });
+      _laboratorio.pdf = ".";
+      pdf = null;
+    }
+  }
+
   _salvarLaboratorio() async {
     _abrirDialog(_dialogContext);
 
@@ -126,6 +166,8 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
         _laboratorio.equipamentos += ', ';
       }
     });
+
+    _laboratorio.area = _laboratorio.area == null ? '' : _laboratorio.area;
 
     _laboratorio.filtro = _laboratorio.nome +
         ' ' +
@@ -299,14 +341,7 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
           this._listaImagens.add(file);
         });
       });
-      equipamentoList = _laboratorio.equipamentos.split(',');
-      if (equipamentoList.length > 0) {
-        equipamentoList.forEach((e) {
-          if (e.startsWith(' ')) {
-            e = e.substring(1, e.length);
-          }
-        });
-      }
+      equipamentoList = _laboratorio.equipamentos.split(', ');
     }
   }
 
@@ -410,6 +445,48 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
     });
   }
 
+  _showDialogConfirma() async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // retorna um objeto do tipo Dialog
+        return AlertDialog(
+          title: new Text("Remover Laboratório?"),
+          actions: <Widget>[
+            new FlatButton(
+              child: new Text("Não"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            new FlatButton(
+              child: new Text("Sim"),
+              onPressed: () async {
+                await deletar();
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  deletar() async {
+    Firestore db = Firestore.instance;
+    db.collection("laboratorios").document(_laboratorio.id).delete();
+    FirebaseAuth auth = FirebaseAuth.instance;
+    FirebaseUser usuarioLogado = await auth.currentUser();
+    String idUsuarioLogado = usuarioLogado.uid;
+    db
+        .collection("meus_laboratorios")
+        .document(idUsuarioLogado)
+        .collection("laboratorios")
+        .document(_laboratorio.id)
+        .delete();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -417,6 +494,11 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
         title: Text(widget.laboratorio != null
             ? "Editar Laboratório"
             : "Novo Laboratório"),
+        actions: [
+          if (widget.laboratorio?.id != null)
+            FlatButton(
+                onPressed: _showDialogConfirma, child: Icon(Icons.delete))
+        ],
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -605,7 +687,7 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
                     validator: (valor) {
                       return Validador()
                           .add(Validar.OBRIGATORIO, msg: "Campo obrigatório")
-                          .maxLength(200, msg: "Máximo de 200 caracteres")
+                          .maxLength(1000, msg: "Máximo de 1000 caracteres")
                           .valido(valor);
                     },
                   ),
@@ -613,7 +695,7 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
                 Padding(
                   padding: EdgeInsets.only(bottom: 15),
                   child: Text(
-                    'Equipamentos:',
+                    'Principais Equipamentos:',
                     style: TextStyle(fontSize: 20),
                   ),
                 ),
@@ -956,7 +1038,7 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
                       decoration: InputDecoration(
                           contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
                           border: OutlineInputBorder(),
-                          hintText: "Área*"),
+                          hintText: "Área"),
                     ),
                     suggestionsCallback: (pattern) async {
                       return await getSuggestionArea(pattern);
@@ -974,20 +1056,36 @@ class _NovoLaboratorioState extends State<NovoLaboratorio> {
                     },
                   ),
                 ),
-                BotaoCustomizado(
-                  texto: "Salvar Laboratório",
-                  onPressed: () {
-                    if (_formKey.currentState.validate()) {
-                      //salva campos
-                      _formKey.currentState.save();
+                Padding(
+                  padding: EdgeInsets.only(bottom: 5, top: 5),
+                  child: Text(pdfNome),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(bottom: 5, top: 5),
+                  child: BotaoCustomizado(
+                    texto: "Normas de Utilização",
+                    onPressed: () {
+                      _uploadPdf();
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(bottom: 5, top: 5),
+                  child: BotaoCustomizado(
+                    texto: "Salvar Laboratório",
+                    onPressed: () {
+                      if (_formKey.currentState.validate()) {
+                        //salva campos
+                        _formKey.currentState.save();
 
-                      //Configura dialog context
-                      _dialogContext = context;
+                        //Configura dialog context
+                        _dialogContext = context;
 
-                      //salvar lab
-                      _salvarLaboratorio();
-                    }
-                  },
+                        //salvar lab
+                        _salvarLaboratorio();
+                      }
+                    },
+                  ),
                 ),
               ],
             ),

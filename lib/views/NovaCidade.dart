@@ -44,6 +44,39 @@ class _NovaCidadeState extends State<NovaCidade> {
         });
   }
 
+  _showDialogConfirma() async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // retorna um objeto do tipo Dialog
+        return AlertDialog(
+          title: new Text("Remover Cidade?"),
+          actions: <Widget>[
+            new FlatButton(
+              child: new Text("Não"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            new FlatButton(
+              child: new Text("Sim"),
+              onPressed: () async {
+                await deletar();
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  deletar() async {
+    Firestore db = Firestore.instance;
+    db.collection("cidades").document(_cidade.id).delete();
+  }
+
   _salvarCidade() async {
     _abrirDialog(_dialogContext);
     Firestore db = Firestore.instance;
@@ -81,6 +114,11 @@ class _NovaCidadeState extends State<NovaCidade> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.cidade != null ? "Editar Cidade" : "Nova Cidade"),
+        actions: [
+          if (widget.cidade?.id != null)
+            FlatButton(
+                onPressed: _showDialogConfirma, child: Icon(Icons.delete))
+        ],
       ),
       body: SingleChildScrollView(
         child: Container(

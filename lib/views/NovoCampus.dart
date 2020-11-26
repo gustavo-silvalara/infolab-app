@@ -44,6 +44,39 @@ class _NovoCampusState extends State<NovoCampus> {
         });
   }
 
+  _showDialogConfirma() async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // retorna um objeto do tipo Dialog
+        return AlertDialog(
+          title: new Text("Remover Campus?"),
+          actions: <Widget>[
+            new FlatButton(
+              child: new Text("Não"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            new FlatButton(
+              child: new Text("Sim"),
+              onPressed: () async {
+                await deletar();
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  deletar() async {
+    Firestore db = Firestore.instance;
+    db.collection("campus").document(_campus.id).delete();
+  }
+
   _salvarCampus() async {
     _abrirDialog(_dialogContext);
     Firestore db = Firestore.instance;
@@ -108,6 +141,11 @@ class _NovoCampusState extends State<NovoCampus> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.campus != null ? "Editar Campus" : "Novo Campus"),
+        actions: [
+          if (widget.campus?.id != null)
+            FlatButton(
+                onPressed: _showDialogConfirma, child: Icon(Icons.delete))
+        ],
       ),
       body: SingleChildScrollView(
         child: Container(
